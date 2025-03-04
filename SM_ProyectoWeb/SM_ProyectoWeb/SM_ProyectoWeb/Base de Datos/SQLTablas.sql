@@ -6,13 +6,17 @@ CREATE TABLE Estado (
     Descripcion NVARCHAR(50) NOT NULL,
 );
 
+CREATE TABLE Errores (
+    Id_Errores bigint IDENTITY(1,1) PRIMARY KEY Not null,
+    Descripcion NVARCHAR(50) NOT NULL,
+);
+
 CREATE TABLE Usuario (
     Id_Usuario bigint IDENTITY(1,1) PRIMARY KEY Not null,
 	Id_Estado bigint NOT NULL, 
     Nombre NVARCHAR(50) NOT NULL,
     Email NVARCHAR(255) UNIQUE NOT NULL,
     Contrasenia NVARCHAR(50) NOT NULL,
-    Fecha_Registro DATETIME DEFAULT GETDATE(),
     Rol NVARCHAR(50), 
 	FOREIGN KEY (Id_Estado) REFERENCES Estado(Id_Estado)
 );

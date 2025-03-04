@@ -1,4 +1,4 @@
-﻿namespace SM_ProyectoApi.Models
+﻿namespace SM_ProyectoWeb.Models
 {
     public class UsuarioModel
     {
@@ -12,11 +12,10 @@
 
         public string? Contrasenia { get; set; }
 
+        ////public DateTime Fecha_Registro { get; set; }
+
         public string? Rol { get; set; }
 
         public string? Token { get; set; }
-
-
-
     }
 }

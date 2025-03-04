@@ -9,20 +9,13 @@ CREATE PROCEDURE [dbo].[RegistrarUsuario]
     @Nombre NVARCHAR(50),
     @Email NVARCHAR(255),
     @Contrasenia NVARCHAR(50),
-    @Fecha_Registro DATETIME,
     @Rol NVARCHAR(50) = 'User'
 AS
 BEGIN
-    -- Si no se pasa la fecha, se asigna la fecha actual
-    IF @Fecha_Registro IS NULL
-    BEGIN
-        SET @Fecha_Registro = GETDATE();
-    END
-
     IF NOT EXISTS (SELECT 1 FROM Usuario WHERE Email = @Email)
     BEGIN
-        INSERT INTO dbo.Usuario (Id_Estado, Nombre, Email, Contrasenia, Fecha_Registro, Rol)
-        VALUES (@Id_Estado, @Nombre, @Email, @Contrasenia, @Fecha_Registro, @Rol)
+        INSERT INTO dbo.Usuario (Id_Estado, Nombre, Email, Contrasenia, Rol)
+        VALUES (@Id_Estado, @Nombre, @Email, @Contrasenia, @Rol)
     END
 END
 GO

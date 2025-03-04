@@ -30,7 +30,7 @@ namespace SM_ProyectoApi.Controllers
             using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
             {
                 var result = context.Execute("RegistrarUsuario",
-                    new { model.Nombre, model.Email, model.Contrasenia, model.Fecha_Registro });
+                    new { model.Nombre, model.Email, model.Contrasenia});
 
                 var respuesta = new RespuestaModel();
 
