@@ -1,0 +1,113 @@
+﻿@using SM_ProyectoWeb.Models
+@model List<RecetaModel>
+
+<div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+    <div class="nano">
+        <div class="nano-content">
+            <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+            <ul>
+                <li class="label">MENÚ PRINCIPAL</li>
+                <li class="">
+                    <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                    <ul>
+                        <li><a href="@Url.Action("DesayunosDestacados", "Categorias")">Los más Destacados</a></li>
+                        <li><a href="@Url.Action("DesayunosRecientes", "Categorias")">Añadidos Recientemente</a></li>
+                    </ul>
+                </li>
+                <!-- Más categorías de menú -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="float-left">
+                    <div class="hamburger sidebar-toggle">
+                        <span class="line"></span>
+                        <span class="line"></span>
+                        <span class="line"></span>
+                    </div>
+                </div>
+                <div class="float-right">
+                    <ul>
+                        <li class="header-icon dib">
+                            <span class="user-avatar">John <i class="ti-angle-down f-s-10"></i></span>
+                            <div class="drop-down dropdown-profile">
+                                <div class="dropdown-content-body">
+                                    <ul>
+                                        <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                        <li><a href="#"><i class="ti-settings"></i> <span>Ajustes</span></a></li>
+                                        <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrap">
+    <div class="main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 p-r-0 title-margin-right">
+                    <div class="page-header">
+                        <div class="page-title">
+                            <h2>Puestos Destacados</h2>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Recetas -->
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h2>Recetas de Desayunos Destacados</h2>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nombre</th>
+                                        <th>Fecha de Publicación</th>
+                                        <th>Categoría</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.Titulo</td>
+                                            <td>@item.Fecha_Publicacion</td>
+                                            <td>@item.Id_Categoria</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="row">
+        <div class="col-lg-12">
+            <p>© Las Recetas de la Felicidad</p>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/lib/jquery.min.js"></script>
+<script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+<script src="~/assets/js/lib/menubar/sidebar.js"></script>
+<script src="~/assets/js/lib/preloader/pace.min.js"></script>
+<script src="~/assets/js/lib/bootstrap.min.js"></script>
+<script src="~/assets/js/scripts.js"></script>

@@ -1,4 +1,4 @@
-﻿namespace SM_ProyectoApi.Models
+﻿namespace SM_ProyectoWeb.Models
 {
     public class RecetaModel
     {
