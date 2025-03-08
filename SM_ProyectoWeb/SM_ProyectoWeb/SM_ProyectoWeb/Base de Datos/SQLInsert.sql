@@ -17,23 +17,34 @@ INSERT INTO Usuario (Nombre, Email, Contrasenia, Id_Rol, Id_Estado) VALUES
 ('Carmel del cielo', 'Carmel@cielo.com', 'ruizelena', 1, 2);
 
 -- Insert Receta
-INSERT INTO Receta (Id_Usuario, Titulo, Descripcion) VALUES
-(1, 'Tacos al Pastor', 'Tacos con carne de cerdo marinada'),
-(2, 'Ensalada César', 'Ensalada con aderezo César y pollo'),
-(3, 'Lasagna Boloñesa', 'Lasagna con salsa boloñesa y queso'),
-(4, 'Sushi Roll', 'Roll de sushi con salmón y aguacate'),
-(5, 'Pizza Margarita', 'Pizza con tomate, mozzarella y albahaca');
+INSERT INTO [ProyectoWebAvanzada].[dbo].[Receta] 
+(Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion, PlatoReciente, PlatoDestacada)
+VALUES
+(1, 'Desayuno Saludable', 'Avena, Frutas', 'Un desayuno energético con avena, frutas frescas y miel.', '2025-03-08', 1, 1),
+(1, 'Tostadas con Aguacate', 'Pan integral, Aguacate, Huevo', 'Tostadas con aguacate y huevo revuelto, acompañadas de un jugo natural.', '2025-03-08', 1, 0),
+(1, 'Batido de Frutas', 'Frutillas, Plátano, Yogur', 'Un batido refrescante de frutas frescas, ideal para el desayuno.', '2025-03-08', 0, 1);
 
--- Insert Ingrediente
-INSERT INTO Ingrediente (Nombre, Unidad_Medida) VALUES
-('Carne de cerdo', 'gramos'),
-('Lechuga', 'hojas'),
-('Pasta de lasagna', 'unidad'),
-('Salmón', 'gramos'),
-('Masa de pizza', 'gramos'),
-('Chocolate', 'gramos'),
-('Pescado', 'gramos'),
-('Arroz', 'gramos');
+INSERT INTO [ProyectoWebAvanzada].[dbo].[Receta] 
+(Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion, PlatoReciente, PlatoDestacada)
+VALUES
+(2, 'Ensalada César', 'Lechuga, Pollo, Queso', 'Ensalada fresca con pollo a la parrilla, queso parmesano y aderezo César.', '2025-03-08', 1, 0),
+(2, 'Bruschetta', 'Pan, Tomate, Albahaca', 'Pan tostado con tomate fresco, albahaca y un toque de aceite de oliva.', '2025-03-08', 0, 1),
+(2, 'Sopa de Tomate', 'Tomate, Ajo, Cebolla', 'Sopa cremosa de tomate, con un toque de albahaca y crema fresca.', '2025-03-08', 1, 0);
+
+INSERT INTO [ProyectoWebAvanzada].[dbo].[Receta] 
+(Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion, PlatoReciente, PlatoDestacada)
+VALUES
+(3, 'Pollo al Horno', 'Pollo, Papas, Especias', 'Pollo asado al horno con papas y un toque de especias.', '2025-03-08', 1, 1),
+(3, 'Tacos de Carne', 'Carne, Tortillas, Cilantro', 'Tacos con carne de res, cebolla, cilantro y salsa picante.', '2025-03-08', 0, 0),
+(3, 'Paella de Mariscos', 'Arroz, Mariscos, Azafrán', 'Paella de mariscos con arroz, azafrán y verduras.', '2025-03-08', 1, 0);
+
+INSERT INTO [ProyectoWebAvanzada].[dbo].[Receta] 
+(Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion, PlatoReciente, PlatoDestacada)
+VALUES
+(4, 'Tarta de Manzana', 'Manzana, Masa, Azúcar', 'Tarta de manzana casera con una capa crujiente de azúcar.', '2025-03-08', 0, 1),
+(4, 'Brownie de Chocolate', 'Chocolate, Harina, Nueces', 'Brownie de chocolate con nueces, suave por dentro y crujiente por fuera.', '2025-03-08', 1, 0),
+(4, 'Helado de Vainilla', 'Leche, Azúcar, Vainilla', 'Helado casero de vainilla, cremoso y delicioso.', '2025-03-08', 0, 0);
+
 
 -- InsertPaso
 INSERT INTO Paso (Id_Receta, Descripcion, Numero_Paso) VALUES
@@ -43,15 +54,6 @@ INSERT INTO Paso (Id_Receta, Descripcion, Numero_Paso) VALUES
 (4, 'Cortar el salmón en tiras', 1),
 (5, 'Extender la masa de pizza', 1);
 
--- Insertando en Receta_Ingrediente
-INSERT INTO Receta_Ingrediente (Id_Receta, Id_Ingrediente, Cantidad) VALUES
-(1, 1, 500),
-(2, 2, 5),
-(3, 3, 4),
-(4, 4, 200),
-(5, 5, 250),
-(2, 6, 300),
-(3, 7, 200);
 
 -- Insertando en Comentario
 INSERT INTO Comentario (Contenido, Id_Usuario, Id_Receta) VALUES
@@ -72,20 +74,10 @@ INSERT INTO Valoracion (Puntuacion, Id_Usuario, Id_Receta) VALUES
 (5, 6, 5);
 
 -- Insertando en Categoria
-INSERT INTO Categoria (Nombre) VALUES
-('Mexicana'),
-('Ensaladas'),
-('Pastas'),
-('Japonesa'),
-('Pizzas'),
-('Postres'),
-('Mariscos'),
-('Española');
-
--- Insertando en Receta_Categoria
-INSERT INTO Receta_Categoria (Id_Receta, Id_Categoria) VALUES
-(2, 2),
-(3, 3),
-(4, 4),
-(5, 5),
-(5, 6);
+-- Desayunos
+INSERT INTO Categoria (Nombre)
+VALUES
+('Desayunos'),
+('Entradas'),
+('Platos Fuertes'),
+('Postres');

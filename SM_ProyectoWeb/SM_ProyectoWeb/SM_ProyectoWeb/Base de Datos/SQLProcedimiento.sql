@@ -1,7 +1,5 @@
 Use ProyectoWebAvanzada;
 
-------------------------  PROCEDIMIENTOS  ----------------------
-
 ------------------------ RegistrarUsuario ----------------------
 
 CREATE PROCEDURE [dbo].[RegistrarUsuario]
@@ -39,6 +37,107 @@ BEGIN
         AND U.Id_Estado = 1
 END
 GO
+
+------------------------ DesayunosDestacados ----------------------
+
+CREATE PROCEDURE DesayunosDestacados
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoDestacada = 0 AND Id_Categoria = 1;
+END;
+GO
+
+------------------------ DesayunosRecientes ----------------------
+
+CREATE PROCEDURE DesayunosRecientes
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoReciente = 1 AND Id_Categoria = 1;
+END;
+GO
+
+
+------------------------ EntradasDestacados ----------------------
+
+CREATE PROCEDURE EntradasDestacados
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoDestacada = 0 AND Id_Categoria = 2;
+END;
+GO
+
+------------------------ EntradasRecientes ----------------------
+
+CREATE PROCEDURE EntradasRecientes
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoReciente = 1 AND Id_Categoria = 2;
+END;
+GO
+
+------------------------ PlatosFuertesDestacados ----------------------
+
+CREATE PROCEDURE PlatosFuertesDestacados
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoDestacada = 0 AND Id_Categoria = 3;
+END;
+GO
+
+------------------------ PlatosFuertesRecientes ----------------------
+
+CREATE PROCEDURE PlatosFuertesRecientes
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoReciente = 1 AND Id_Categoria = 3;
+END;
+GO
+
+------------------------ PostresDestacados ----------------------
+
+CREATE PROCEDURE PostresDestacados
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoDestacada = 0 AND Id_Categoria = 4;
+END;
+GO
+
+------------------------ PostresRecientes ----------------------
+
+CREATE PROCEDURE PostresRecientes
+AS
+BEGIN
+    SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
+	       PlatoReciente, PlatoDestacada
+    FROM Receta
+    WHERE PlatoReciente = 1 AND Id_Categoria = 4;
+END;
+GO
+
+
+
+
 
 
 
