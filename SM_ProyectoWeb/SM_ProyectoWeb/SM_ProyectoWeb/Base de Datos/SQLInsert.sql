@@ -4,14 +4,17 @@ USE ProyectoWebAvanzada;
 INSERT INTO Estado (Descripcion) VALUES
 ('Activo'), ('Inactivo');
 
+INSERT INTO Roles (Rol) VALUES
+('Usuario'), ('Administrador');
+
 -- Insert Usuario
-INSERT INTO Usuario (Nombre, Email, Contrasenia, Rol, Id_Estado) VALUES
-('Nicole Hidalgo', 'Nicole@Hidalgo.com', '123456', 'Admin', 1),
-('Maricurz Lopez', 'Maricurz@Lopez.com', 'abcdef', 'Admin', 1),
-('Emmanuel Araya', 'Emmanuel@Araya.com', 'pass123', 'Admin', 1),
-('Anderson Ulate', 'Anderson@Ulate.com', 'torresana', 'User', 1),
-('Andres Chavarria', 'Andres@Chavarria.com', 'mendezluis', 'User', 1),
-('Carmel del cielo', 'Carmel@cielo.com', 'ruizelena', 'User', 2);
+INSERT INTO Usuario (Nombre, Email, Contrasenia, Id_Rol, Id_Estado) VALUES
+('Nicole Hidalgo', 'Nicole@Hidalgo.com', '123456', 2, 1),
+('Maricurz Lopez', 'Maricurz@Lopez.com', 'abcdef', 2, 1),
+('Emmanuel Araya', 'Emmanuel@Araya.com', 'pass123', 2, 1),
+('Anderson Ulate', 'Anderson@Ulate.com', 'torresana', 1, 1),
+('Andres Chavarria', 'Andres@Chavarria.com', 'mendezluis', 1, 1),
+('Carmel del cielo', 'Carmel@cielo.com', 'ruizelena', 1, 2);
 
 -- Insert Receta
 INSERT INTO Receta (Id_Usuario, Titulo, Descripcion) VALUES

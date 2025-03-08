@@ -11,14 +11,20 @@ CREATE TABLE Errores (
     Descripcion NVARCHAR(50) NOT NULL,
 );
 
+CREATE TABLE Roles (
+    Id_Rol bigint IDENTITY(1,1) PRIMARY KEY Not null,
+    Rol NVARCHAR(50) NOT NULL,
+);
+
 CREATE TABLE Usuario (
     Id_Usuario bigint IDENTITY(1,1) PRIMARY KEY Not null,
 	Id_Estado bigint NOT NULL, 
+    Id_Rol bigint NOT NULL, 
     Nombre NVARCHAR(50) NOT NULL,
     Email NVARCHAR(255) UNIQUE NOT NULL,
     Contrasenia NVARCHAR(50) NOT NULL,
-    Rol NVARCHAR(50), 
-	FOREIGN KEY (Id_Estado) REFERENCES Estado(Id_Estado)
+	FOREIGN KEY (Id_Estado) REFERENCES Estado(Id_Estado),
+    FOREIGN KEY (Id_Rol) REFERENCES Roles(Id_Rol)
 );
 
 CREATE TABLE Receta (
@@ -52,7 +58,6 @@ CREATE TABLE Receta_Ingrediente (
     FOREIGN KEY (Id_Receta) REFERENCES Receta(Id_Receta) ON DELETE CASCADE,
     FOREIGN KEY (Id_Ingrediente) REFERENCES Ingrediente(Id_Ingrediente) ON DELETE CASCADE
 );
-
 
 CREATE TABLE Comentario (
     Id_Comentario bigint IDENTITY(1,1) PRIMARY KEY Not null,

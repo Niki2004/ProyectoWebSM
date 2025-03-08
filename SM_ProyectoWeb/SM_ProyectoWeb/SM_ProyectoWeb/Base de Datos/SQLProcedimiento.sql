@@ -6,16 +6,16 @@ Use ProyectoWebAvanzada;
 
 CREATE PROCEDURE [dbo].[RegistrarUsuario]
     @Id_Estado bigint = 1,
+    @Id_Rol bigint = 1,
     @Nombre NVARCHAR(50),
     @Email NVARCHAR(255),
-    @Contrasenia NVARCHAR(50),
-    @Rol NVARCHAR(50) = 'User'
+    @Contrasenia NVARCHAR(50)
 AS
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM Usuario WHERE Email = @Email)
     BEGIN
-        INSERT INTO dbo.Usuario (Id_Estado, Nombre, Email, Contrasenia, Rol)
-        VALUES (@Id_Estado, @Nombre, @Email, @Contrasenia, @Rol)
+        INSERT INTO dbo.Usuario (Id_Estado, Id_Rol, Nombre, Email, Contrasenia)
+        VALUES (@Id_Estado, @Id_Rol, @Nombre, @Email, @Contrasenia)
     END
 END
 GO
@@ -32,7 +32,7 @@ BEGIN
             U.Nombre AS NombreUsuario,
             U.Email AS Correo,
             U.Id_Estado AS Estado,
-            U.Rol
+            U.Id_Rol AS Roles
     FROM    dbo.Usuario U
     WHERE   U.Email = @Email
         AND U.Contrasenia = @Contrasenia
