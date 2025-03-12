@@ -78,6 +78,133 @@ namespace SM_ProyectoApi.Controllers
                 return Ok(respuesta);
             }
         }
+
+        [HttpDelete]
+        [Route("EliminarReceta/{idReceta}")]
+        public IActionResult EliminarReceta(long idReceta)
+        {
+            var respuesta = new RespuestaModel();
+            try
+            {
+                using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+                {
+                    
+                    var result = context.Execute("EliminarReceta", new { Id_Receta = idReceta });
+
+                    if (result > 0)
+                    {
+                        respuesta.Indicador = true;
+                        respuesta.Mensaje = "La receta ha sido eliminada correctamente.";
+                    }
+                    else
+                    {
+                        respuesta.Indicador = false;
+                        respuesta.Mensaje = "No se pudo eliminar la receta. Verifique que la receta exista.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Indicador = false;
+                respuesta.Mensaje = $"Error: {ex.Message}";
+            }
+
+            return Ok(respuesta);
+        }
+
+
+        [HttpPost]
+        [Route("RegistrarComentario")]
+        public IActionResult RegistrarComentario(ComentarioModel model)
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var result = context.Execute("RegistrarComentario",
+                    new { model.Id_Usuario, model.Id_Receta, model.Contenido});
+
+                var respuesta = new RespuestaModel();
+
+                if (result > 0)
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Su información se ha registrado correctamente";
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "Su información no ha registrado correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+
+        [HttpPut]
+        [Route("ModificarComentario/{id}")]
+        public IActionResult ModificarComentario(long id, ComentarioModel model)
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var result = context.Execute("ModificarComentario",
+                    new
+                    {
+                        Id_Comentario = id,
+                        model.Id_Usuario,
+                        model.Id_Receta,
+                        model.Contenido
+                    });
+
+                var respuesta = new RespuestaModel();
+                if (result > 0)
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Su información se ha modificado correctamente";
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "Su información no ha modificado correctamente";
+                }
+                return Ok(respuesta);
+            }
+        }
+
+
+        [HttpDelete]
+        [Route("EliminarComentario")]
+        public IActionResult EliminarComentario(long idComentario)
+        {
+            var respuesta = new RespuestaModel();
+            try
+            {
+                using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+                {
+                    // Llamada al procedimiento almacenado EliminarComentario
+                    var result = context.Execute("EliminarComentario", new { Id_Comentario = idComentario });
+
+                    if (result > 0)
+                    {
+                        respuesta.Indicador = true;
+                        respuesta.Mensaje = "El comentario ha sido eliminado correctamente.";
+                    }
+                    else
+                    {
+                        respuesta.Indicador = false;
+                        respuesta.Mensaje = "No se pudo eliminar el comentario. Verifique el Id.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Indicador = false;
+                respuesta.Mensaje = $"Error: {ex.Message}";
+            }
+
+            return Ok(respuesta);
+        }
+
+
     }
 }
 

@@ -146,10 +146,6 @@ CREATE PROCEDURE RegistrarReceta
     @Ingrediente NVARCHAR(255)
 AS
 BEGIN
-    SET NOCOUNT ON;
-
-    BEGIN TRANSACTION;
-
     INSERT INTO [dbo].[Receta] (
         Id_Categoria, Titulo, Descripcion, Fecha_Publicacion, 
         PlatoReciente, PlatoDestacada, Ingrediente
@@ -158,13 +154,14 @@ BEGIN
         @Id_Categoria, @Titulo, @Descripcion, GETDATE(), 
         @PlatoReciente, @PlatoDestacada, @Ingrediente
     );
-
-    COMMIT TRANSACTION;
 END;
 
------------------------- RegistrarReceta ----------------------
 
-CREATE PROCEDURE RegistrarReceta
+------------------------ ModificarReceta ----------------------
+
+
+CREATE PROCEDURE ModificarReceta
+    @Id_Receta BIGINT,
     @Id_Categoria BIGINT,
     @Titulo NVARCHAR(255),
     @Descripcion NVARCHAR(255),
@@ -173,23 +170,77 @@ CREATE PROCEDURE RegistrarReceta
     @Ingrediente NVARCHAR(255)
 AS
 BEGIN
-    SET NOCOUNT ON;
 
-    BEGIN TRANSACTION;
+    UPDATE [dbo].[Receta]
+    SET
+        Id_Categoria = @Id_Categoria,
+        Titulo = @Titulo,
+        Descripcion = @Descripcion,
+        PlatoReciente = @PlatoReciente,
+        PlatoDestacada = @PlatoDestacada,
+        Ingrediente = @Ingrediente
+    WHERE Id_Receta = @Id_Receta;
 
-    INSERT INTO [dbo].[Receta] (
-        Id_Categoria, Titulo, Descripcion, Fecha_Publicacion, 
-        PlatoReciente, PlatoDestacada, Ingrediente
-    )
-    VALUES (
-        @Id_Categoria, @Titulo, @Descripcion, GETDATE(), 
-        @PlatoReciente, @PlatoDestacada, @Ingrediente
-    );
+END;
 
-    COMMIT TRANSACTION;
+------------------------ EliminarReceta ----------------------
+
+
+CREATE PROCEDURE EliminarReceta
+    @Id_Receta BIGINT
+AS
+BEGIN
+    -- Eliminar la receta correspondiente al Id_Receta
+    DELETE FROM [dbo].[Receta]
+    WHERE Id_Receta = @Id_Receta;
 END;
 
 
 
+------------------------ RegistrarComentario ----------------------
 
+CREATE PROCEDURE RegistrarComentario
+    @Id_Usuario BIGINT,
+    @Id_Receta BIGINT,
+    @Contenido NVARCHAR(255)
+AS
+BEGIN
+    INSERT INTO [dbo].[Comentario] (
+        Id_Usuario, Id_Receta, Contenido, Fecha_Comentario
+    )
+    VALUES (
+        @Id_Usuario, @Id_Receta, @Contenido, GETDATE()
+    );
+END;
+
+
+------------------------ ModificarComentario ----------------------
+
+CREATE PROCEDURE ModificarComentario
+    @Id_Comentario BIGINT,
+    @Id_Usuario BIGINT,
+    @Id_Receta BIGINT,
+    @Contenido NVARCHAR(255)
+AS
+BEGIN
+    UPDATE [dbo].[Comentario]
+    SET
+        Id_Usuario = @Id_Usuario,
+        Id_Receta = @Id_Receta,
+        Contenido = @Contenido,
+        Fecha_Comentario = GETDATE()  
+    WHERE Id_Comentario = @Id_Comentario;
+END;
+
+
+------------------------ EliminarComentario ----------------------
+
+CREATE PROCEDURE EliminarComentario
+    @Id_Comentario BIGINT
+AS
+BEGIN
+    -- Eliminar el comentario correspondiente al Id_Comentario
+    DELETE FROM [dbo].[Comentario]
+    WHERE Id_Comentario = @Id_Comentario;
+END;
 
