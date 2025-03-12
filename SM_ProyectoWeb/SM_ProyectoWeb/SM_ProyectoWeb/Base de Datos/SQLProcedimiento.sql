@@ -135,10 +135,59 @@ BEGIN
 END;
 GO
 
+------------------------ RegistrarReceta ----------------------
 
+CREATE PROCEDURE RegistrarReceta
+    @Id_Categoria BIGINT,
+    @Titulo NVARCHAR(255),
+    @Descripcion NVARCHAR(255),
+    @PlatoReciente BIT,
+    @PlatoDestacada BIT,
+    @Ingrediente NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    BEGIN TRANSACTION;
 
+    INSERT INTO [dbo].[Receta] (
+        Id_Categoria, Titulo, Descripcion, Fecha_Publicacion, 
+        PlatoReciente, PlatoDestacada, Ingrediente
+    )
+    VALUES (
+        @Id_Categoria, @Titulo, @Descripcion, GETDATE(), 
+        @PlatoReciente, @PlatoDestacada, @Ingrediente
+    );
 
+    COMMIT TRANSACTION;
+END;
+
+------------------------ RegistrarReceta ----------------------
+
+CREATE PROCEDURE RegistrarReceta
+    @Id_Categoria BIGINT,
+    @Titulo NVARCHAR(255),
+    @Descripcion NVARCHAR(255),
+    @PlatoReciente BIT,
+    @PlatoDestacada BIT,
+    @Ingrediente NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRANSACTION;
+
+    INSERT INTO [dbo].[Receta] (
+        Id_Categoria, Titulo, Descripcion, Fecha_Publicacion, 
+        PlatoReciente, PlatoDestacada, Ingrediente
+    )
+    VALUES (
+        @Id_Categoria, @Titulo, @Descripcion, GETDATE(), 
+        @PlatoReciente, @PlatoDestacada, @Ingrediente
+    );
+
+    COMMIT TRANSACTION;
+END;
 
 
 
