@@ -46,51 +46,38 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
-
-
-        [HttpPut("modificar/{id}")]
-        public async Task<IActionResult> ModificarReceta(long id, [FromBody] RecetaModel receta)
+        [HttpPut]
+        [Route("ModificarReceta/{id}")]
+        public IActionResult ModificarReceta(long id, RecetaModel model)
         {
-            if (receta == null || id <= 0)
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
             {
-                return BadRequest("Datos inválidos para la actualización.");
-            }
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-                {
-                    await conn.OpenAsync();
-
-                    using (SqlCommand cmd = new SqlCommand("ModificarReceta", conn))
+                var result = context.Execute("ModificarReceta",
+                    new
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
+                        Id_Receta = id,
+                        model.Id_Categoria,
+                        model.Titulo,
+                        model.Descripcion,
+                        model.PlatoReciente,
+                        model.PlatoDestacada,
+                        model.Ingrediente
+                    });
 
-                        cmd.Parameters.AddWithValue("@Id_Receta", id);
-                        cmd.Parameters.AddWithValue("@Id_Categoria", receta.Id_Categoria);
-                        cmd.Parameters.AddWithValue("@Titulo", receta.Titulo);
-                        cmd.Parameters.AddWithValue("@Descripcion", receta.Descripcion);
-                        cmd.Parameters.AddWithValue("@PlatoReciente", receta.PlatoReciente);
-                        cmd.Parameters.AddWithValue("@PlatoDestacada", receta.PlatoDestacada);
-                        cmd.Parameters.AddWithValue("@Ingrediente", receta.Ingrediente);
-
-                        int filasAfectadas = await cmd.ExecuteNonQueryAsync();
-
-                        if (filasAfectadas == 0)
-                        {
-                            return NotFound(new { message = "No se encontró la receta a modificar." });
-                        }
-                    }
+                var respuesta = new RespuestaModel();
+                if (result > 0)
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Su información se ha modificado correctamente";
                 }
-
-                return Ok(new { message = "Receta modificada exitosamente." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error al modificar la receta.", details = ex.Message });
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "Su información no ha modificado correctamente";
+                }
+                return Ok(respuesta);
             }
         }
-
     }
 }
 
