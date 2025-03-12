@@ -7,7 +7,7 @@ using SM_ProyectoApi.Models;
 
 namespace SM_ProyectoApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase
