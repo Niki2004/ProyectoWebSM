@@ -17,5 +17,7 @@
         public bool PlatoDestacada { get; set; }
 
         public string? Ingrediente { get; set; }
+
+        public string Imagen { get; set; }
     }
 }

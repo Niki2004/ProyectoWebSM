@@ -44,7 +44,7 @@ CREATE PROCEDURE DesayunosDestacados
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen 
     FROM Receta
     WHERE PlatoDestacada = 0 AND Id_Categoria = 1;
 END;
@@ -56,7 +56,7 @@ CREATE PROCEDURE DesayunosRecientes
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
     WHERE PlatoReciente = 1 AND Id_Categoria = 1;
 END;
@@ -69,7 +69,7 @@ CREATE PROCEDURE EntradasDestacados
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
     WHERE PlatoDestacada = 0 AND Id_Categoria = 2;
 END;
@@ -81,7 +81,7 @@ CREATE PROCEDURE EntradasRecientes
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
     WHERE PlatoReciente = 1 AND Id_Categoria = 2;
 END;
@@ -93,7 +93,7 @@ CREATE PROCEDURE PlatosFuertesDestacados
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
     WHERE PlatoDestacada = 0 AND Id_Categoria = 3;
 END;
@@ -105,7 +105,7 @@ CREATE PROCEDURE PlatosFuertesRecientes
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
     WHERE PlatoReciente = 1 AND Id_Categoria = 3;
 END;
@@ -117,7 +117,7 @@ CREATE PROCEDURE PostresDestacados
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
     WHERE PlatoDestacada = 0 AND Id_Categoria = 4;
 END;
@@ -129,7 +129,7 @@ CREATE PROCEDURE PostresRecientes
 AS
 BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
-	       PlatoReciente, PlatoDestacada
+	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
     WHERE PlatoReciente = 1 AND Id_Categoria = 4;
 END;
@@ -143,22 +143,22 @@ CREATE PROCEDURE RegistrarReceta
     @Descripcion NVARCHAR(255),
     @PlatoReciente BIT,
     @PlatoDestacada BIT,
-    @Ingrediente NVARCHAR(255)
+    @Ingrediente NVARCHAR(255),
+	@Imagen NVARCHAR(255)
 AS
 BEGIN
     INSERT INTO [dbo].[Receta] (
         Id_Categoria, Titulo, Descripcion, Fecha_Publicacion, 
-        PlatoReciente, PlatoDestacada, Ingrediente
+        PlatoReciente, PlatoDestacada, Ingrediente, Imagen
     )
     VALUES (
         @Id_Categoria, @Titulo, @Descripcion, GETDATE(), 
-        @PlatoReciente, @PlatoDestacada, @Ingrediente
+        @PlatoReciente, @PlatoDestacada, @Ingrediente, @Imagen
     );
 END;
 
 
 ------------------------ ModificarReceta ----------------------
-
 
 CREATE PROCEDURE ModificarReceta
     @Id_Receta BIGINT,
@@ -167,7 +167,8 @@ CREATE PROCEDURE ModificarReceta
     @Descripcion NVARCHAR(255),
     @PlatoReciente BIT,
     @PlatoDestacada BIT,
-    @Ingrediente NVARCHAR(255)
+    @Ingrediente NVARCHAR(255),
+	@Imagen NVARCHAR(255)
 AS
 BEGIN
 
@@ -178,13 +179,13 @@ BEGIN
         Descripcion = @Descripcion,
         PlatoReciente = @PlatoReciente,
         PlatoDestacada = @PlatoDestacada,
-        Ingrediente = @Ingrediente
+        Ingrediente = @Ingrediente,
+		Imagen = @Imagen
     WHERE Id_Receta = @Id_Receta;
 
 END;
 
 ------------------------ EliminarReceta ----------------------
-
 
 CREATE PROCEDURE EliminarReceta
     @Id_Receta BIGINT

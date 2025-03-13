@@ -34,13 +34,14 @@ CREATE TABLE Usuario (
 
 CREATE TABLE Receta (
     Id_Receta bigint IDENTITY(1,1) PRIMARY KEY Not null,
-	Id_Categoria bigint NOT NULL, 
+    Id_Categoria bigint NOT NULL, 
     Titulo NVARCHAR(255) NOT NULL,
-	Ingrediente VARCHAR(255) NOT NULL,
+    Ingrediente VARCHAR(255) NOT NULL,
     Descripcion VARCHAR(255) NOT NULL,
     Fecha_Publicacion DATETIME DEFAULT GETDATE(),
-	PlatoReciente BIT NOT NULL,
-    PlatoDestacada BIT NOT NULL
+    PlatoReciente BIT NOT NULL,
+    PlatoDestacada BIT NOT NULL,
+    Imagen NVARCHAR(255) NULL
     FOREIGN KEY (Id_Categoria) REFERENCES Categoria(Id_Categoria)
 );
 

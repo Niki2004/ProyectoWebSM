@@ -7,7 +7,7 @@ using System.Data;
 
 namespace SM_ProyectoApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MisRecetasController : Controller
@@ -28,7 +28,7 @@ namespace SM_ProyectoApi.Controllers
             using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
             {
                 var result = context.Execute("RegistrarReceta",
-                    new {model.Id_Categoria, model.Titulo, model.Descripcion, model.PlatoReciente, model.PlatoDestacada, model.Ingrediente });
+                    new {model.Id_Categoria, model.Titulo, model.Descripcion, model.PlatoReciente, model.PlatoDestacada, model.Ingrediente, model.Imagen });
 
                 var respuesta = new RespuestaModel();
 
@@ -62,7 +62,8 @@ namespace SM_ProyectoApi.Controllers
                         model.Descripcion,
                         model.PlatoReciente,
                         model.PlatoDestacada,
-                        model.Ingrediente
+                        model.Ingrediente,
+                        model.Imagen
                     });
 
                 var respuesta = new RespuestaModel();
