@@ -28,7 +28,7 @@ namespace SM_ProyectoWeb.Controllers
             if (model == null)
             {
                 TempData["Error"] = "Los datos de la receta son inválidos.";
-                return RedirectToAction("CrearReceta");
+                return RedirectToAction("RegistrarReceta");
             }
 
             try
