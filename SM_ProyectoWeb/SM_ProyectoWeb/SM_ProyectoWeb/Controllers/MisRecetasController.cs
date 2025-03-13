@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿    using Microsoft.AspNetCore.Mvc;
 using SM_ProyectoWeb.Models;
+using System.Net.Http.Headers;
 
 namespace SM_ProyectoWeb.Controllers
 {
@@ -21,41 +22,51 @@ namespace SM_ProyectoWeb.Controllers
             return View();
         }
 
-
         [HttpPost]
-        [Route("RegistrarReceta")]
-        public IActionResult RegistrarRecetaWeb(RecetaModel model)
+        public IActionResult RegistrarReceta(RecetaModel model)
         {
             if (model == null)
             {
-                TempData["MensajeError"] = "Los datos de la receta no son válidos.";
-                return RedirectToAction("Index");
+                TempData["Error"] = "Los datos de la receta son inválidos.";
+                return RedirectToAction("CrearReceta");
             }
 
-            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            try
             {
-                var result = context.Execute("RegistrarReceta",
-                    new
-                    {
-                        model.Id_Categoria,
-                        model.Titulo,
-                        model.Descripcion,
-                        model.PlatoReciente,
-                        model.PlatoDestacada,
-                        model.Ingrediente
-                    });
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "RegistrarReceta";
 
-                if (result > 0)
-                {
-                    TempData["MensajeExito"] = "La receta se ha registrado correctamente.";
-                }
-                else
-                {
-                    TempData["MensajeError"] = "Hubo un error al registrar la receta.";
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+
+                    var response = api.PostAsJsonAsync(url, model).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+                        if (result != null && result.Indicador)
+                        {
+                            TempData["Mensaje"] = "La receta se ha registrado correctamente.";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["Error"] = result?.Mensaje ?? "Hubo un problema al registrar la receta.";
+                        }
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Error en la comunicación con el servidor.";
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al registrar la receta: " + ex.Message;
+            }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("RegistrarReceta");
         }
     }
 }

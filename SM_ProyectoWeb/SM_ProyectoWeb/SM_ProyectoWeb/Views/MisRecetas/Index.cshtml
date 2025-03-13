@@ -1,0 +1,491 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recetas de la Felicidad</title>
+    <link rel="stylesheet" href="~/assets/css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
+    <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <style>
+        .recipe-card {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 25px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+            .recipe-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            }
+
+        .recipe-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .recipe-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s;
+            }
+
+        .recipe-card:hover .recipe-image img {
+            transform: scale(1.05);
+        }
+
+        .recipe-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .recipe-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .recipe-category {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .recipe-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .recipe-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .recipe-btn-view {
+            background: #4e73df;
+            color: white;
+        }
+
+            .recipe-btn-view:hover {
+                background: #375ad3;
+            }
+
+        .recipe-btn-save {
+            background: #f8f9fa;
+            color: #555;
+        }
+
+            .recipe-btn-save:hover {
+                background: #e2e6ea;
+            }
+
+        .recipe-filter {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('~/img/food-hero.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+            .hero-section h1 {
+                font-size: 36px;
+                margin-bottom: 15px;
+            }
+
+            .hero-section p {
+                font-size: 18px;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        .featured-recipe {
+            margin-bottom: 40px;
+        }
+
+            .featured-recipe img {
+                border-radius: 8px;
+                width: 100%;
+                max-height: 400px;
+                object-fit: cover;
+            }
+    </style>
+</head>
+<body>
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+                <ul>
+                    <li class="label">MENÚ PRINCIPAL</li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                        <ul>
+                            <li><a href="@Url.Action("DesayunosDestacados","Categorias")">Los más Destacadas</a></li>
+                            <li><a href="@Url.Action("DesayunosRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Entradas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("EntradasDestacados","Categorias")">Las más Destacadas</a></li>
+                            <li><a href="@Url.Action("EntradasRecientes","Categorias")">Añadidas Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Platos Fuertes <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PlatosFuertesDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PlatosFuertesRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PostresRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Mis Recetas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("MisRecetas","Recetas")">Recetas</a></li>
+                            <li><a href="@Url.Action("Favoritas","Recetas")">Marcadas como Favoritas</a></li>
+                            <li><a href="@Url.Action("MisComentarios","Comentarios")">Comentarios</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <ul>
+                            <li class="header-icon dib">
+                                <span class="user-avatar">John <i class="ti-angle-down f-s-10"></i></span>
+                                <div class="drop-down dropdown-profile">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                            <li><a href="#"><i class="ti-settings"></i> <span>Ajustes</span></a></li>
+                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1>Descubre el placer de cocinar</h1>
+                    <p>Explora cientos de recetas deliciosas y fáciles de preparar</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h2>Recetas destacadas</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="recipe-filter">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <select class="form-control">
+                                        <option>Todas las categorías</option>
+                                        <option>Desayunos</option>
+                                        <option>Entradas</option>
+                                        <option>Platos Fuertes</option>
+                                        <option>Postres</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control">
+                                        <option>Ordenar por</option>
+                                        <option>Más populares</option>
+                                        <option>Más recientes</option>
+                                        <option>Más fáciles</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Buscar recetas...">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button"><i class="ti-search"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Recipe -->
+                <div class="row featured-recipe">
+                    <div class="col-lg-6">
+                        <img src="~/img/pancake.jpeg" alt="Pancakes de Frutos Rojos con Canela">
+                    </div>
+                    <div class="col-lg-6">
+                        <h3>Pancakes de Frutos Rojos con Canela</h3>
+                        <p class="text-muted"><span class="recipe-category">Desayunos</span> • 25 minutos • Fácil</p>
+                        <p>Deliciosos pancakes esponjosos acompañados de una mezcla de frutos rojos frescos y un toque de canela. El desayuno perfecto para comenzar el día con energía y buen sabor.</p>
+                        <p><strong>Ingredientes principales:</strong> Harina, huevos, fresas, arándanos, frambuesas, canela, miel</p>
+                        <div class="recipe-buttons">
+                            <button class="recipe-btn recipe-btn-view">Ver receta completa</button>
+                            <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i> Guardar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe Cards -->
+                <div class="row">
+                    <!-- Recipe Card 1 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="recipe-card">
+                            <div class="recipe-image">
+                                <img src="/api/placeholder/400/320" alt="Pastel de chocolate">
+                                <div class="recipe-badge">Destacado</div>
+                            </div>
+                            <div class="recipe-content">
+                                <h4 class="recipe-title">Pastel de Chocolate con Ganache</h4>
+                                <p class="recipe-description">Un delicioso pastel de chocolate cubierto con un ganache suave y cremoso.</p>
+                                <div class="recipe-meta">
+                                    <span class="recipe-category">Postres</span>
+                                    <span>45 min</span>
+                                </div>
+                                <div class="recipe-buttons">
+                                    <button class="recipe-btn recipe-btn-view">Ver receta</button>
+                                    <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Card 2 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="recipe-card">
+                            <div class="recipe-image">
+                                <img src="/api/placeholder/400/320" alt="Ensalada mediterránea">
+                            </div>
+                            <div class="recipe-content">
+                                <h4 class="recipe-title">Ensalada Mediterránea con Queso Feta</h4>
+                                <p class="recipe-description">Ensalada fresca con ingredientes mediterráneos y queso feta desmenuzado.</p>
+                                <div class="recipe-meta">
+                                    <span class="recipe-category">Entradas</span>
+                                    <span>15 min</span>
+                                </div>
+                                <div class="recipe-buttons">
+                                    <button class="recipe-btn recipe-btn-view">Ver receta</button>
+                                    <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Card 3 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="recipe-card">
+                            <div class="recipe-image">
+                                <img src="/api/placeholder/400/320" alt="Pollo al horno">
+                                <div class="recipe-badge">Nuevo</div>
+                            </div>
+                            <div class="recipe-content">
+                                <h4 class="recipe-title">Pollo al Horno con Hierbas y Limón</h4>
+                                <p class="recipe-description">Delicioso pollo al horno con una mezcla de hierbas aromáticas y limón.</p>
+                                <div class="recipe-meta">
+                                    <span class="recipe-category">Platos Fuertes</span>
+                                    <span>60 min</span>
+                                </div>
+                                <div class="recipe-buttons">
+                                    <button class="recipe-btn recipe-btn-view">Ver receta</button>
+                                    <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Card 4 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="recipe-card">
+                            <div class="recipe-image">
+                                <img src="/api/placeholder/400/320" alt="Smoothie de frutas">
+                            </div>
+                            <div class="recipe-content">
+                                <h4 class="recipe-title">Smoothie Energético de Frutas Tropicales</h4>
+                                <p class="recipe-description">Refrescante smoothie con frutas tropicales, perfecto para el desayuno.</p>
+                                <div class="recipe-meta">
+                                    <span class="recipe-category">Desayunos</span>
+                                    <span>10 min</span>
+                                </div>
+                                <div class="recipe-buttons">
+                                    <button class="recipe-btn recipe-btn-view">Ver receta</button>
+                                    <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Card 5 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="recipe-card">
+                            <div class="recipe-image">
+                                <img src="/api/placeholder/400/320" alt="Pasta carbonara">
+                            </div>
+                            <div class="recipe-content">
+                                <h4 class="recipe-title">Pasta Carbonara Tradicional</h4>
+                                <p class="recipe-description">La auténtica pasta carbonara italiana con huevo, panceta y queso pecorino.</p>
+                                <div class="recipe-meta">
+                                    <span class="recipe-category">Platos Fuertes</span>
+                                    <span>25 min</span>
+                                </div>
+                                <div class="recipe-buttons">
+                                    <button class="recipe-btn recipe-btn-view">Ver receta</button>
+                                    <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Card 6 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="recipe-card">
+                            <div class="recipe-image">
+                                <img src="/api/placeholder/400/320" alt="Galletas de avena">
+                                <div class="recipe-badge">Popular</div>
+                            </div>
+                            <div class="recipe-content">
+                                <h4 class="recipe-title">Galletas de Avena y Chocolate</h4>
+                                <p class="recipe-description">Galletas crujientes de avena con trozos de chocolate, perfectas para la merienda.</p>
+                                <div class="recipe-meta">
+                                    <span class="recipe-category">Postres</span>
+                                    <span>30 min</span>
+                                </div>
+                                <div class="recipe-buttons">
+                                    <button class="recipe-btn recipe-btn-view">Ver receta</button>
+                                    <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="row">
+                    <div class="col-12">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Siguiente</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="footer">
+                <p>© Las Recetas de la Felicidad</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <script src="~/assets/js/lib/menubar/sidebar.js"></script>
+    <script src="~/assets/js/lib/preloader/pace.min.js"></script>
+    <script src="~/assets/js/lib/bootstrap.min.js"></script>
+    <script src="~/assets/js/scripts.js"></script>
+</body>
+</html>
