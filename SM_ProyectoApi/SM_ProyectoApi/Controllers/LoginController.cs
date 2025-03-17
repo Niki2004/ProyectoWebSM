@@ -80,13 +80,6 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("CierreSesion")]
-        //public IActionResult CierreSesion(UsuarioModel model)
-        //{
-        //        return ;
-        //}
-
         private string GenerarToken(long Id_Usuario)
         {
             string SecretKey = _configuration.GetSection("Variables:llaveToken").Value!;

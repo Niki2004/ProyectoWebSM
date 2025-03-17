@@ -2,6 +2,42 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!-- Estilos responsivos -->
+<style>
+    /* Estilos generales responsivos */
+    .recipe-content {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .recipe-image-container {
+        max-width: 100% !important;
+        margin: 20px auto !important;
+    }
+    
+    .recipe-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .recipe-info span {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    
+    .related-recipes .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .related-recipes .col-md-4 {
+        flex: 0 0 100%;
+        padding: 10px 0;
+    }
+</style>
+
 <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
     <div class="nano">
         <div class="nano-content">
@@ -34,7 +70,7 @@
                     <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
                     <ul>
                         <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
-                        <li><ahref ="@Url.Action("PostresDestacados", "Categorias")">Añadidos Recientemente</a></li>
+                        <li><a href="@Url.Action("PostresDestacados", "Categorias")">Añadidos Recientemente</a></li>
                     </ul>
                 </li>
                 <li class="">
@@ -91,8 +127,65 @@
                         <div class="page-title">
                             <h2>¡Aprende a preparar tus platos favoritos aquí!</h2>
                         </div>
-                        <p style="margin-top: 40px;">Pancakes de Frutos Rojos con Canela</p>
-                        <img src="~/img/pancake.jpeg" alt="Recetas de la Felicidad">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Pancakes de Frutos Rojos con Canela</h3>
+                        <div class="recipe-image-container" style="max-width: 500px; margin: 20px 0;">
+                            <img src="~/img/pancake.jpeg" alt="Pancakes de Frutos Rojos" style="width: 100%; height: auto;">
+                        </div>
+                        <div class="recipe-description">
+                            <p>Deliciosos pancakes esponjosos con un toque de canela y decorados con una mezcla de frutos rojos frescos. El desayuno perfecto para empezar el día con energía.</p>
+                        </div>
+                        <div class="recipe-details">
+                            <div class="recipe-info">
+                                <span><i class="fa fa-clock-o"></i> Tiempo de preparación: 15 minutos</span>
+                                <span><i class="fa fa-users"></i> Porciones: 4</span>
+                                <span><i class="fa fa-star"></i> Dificultad: Fácil</span>
+                            </div>
+                            <div class="recipe-ingredients">
+                                <h4>Ingredientes:</h4>
+                                <ul>
+                                    <li>2 tazas de harina</li>
+                                    <li>2 cucharadas de azúcar</li>
+                                    <li>1 cucharadita de canela en polvo</li>
+                                    <li>1 cucharadita de polvo para hornear</li>
+                                    <li>2 huevos</li>
+                                    <li>1 1/2 tazas de leche</li>
+                                    <li>2 cucharadas de mantequilla derretida</li>
+                                    <li>1 taza de frutos rojos (fresas, frambuesas, arándanos)</li>
+                                    <li>Miel para servir</li>
+                                </ul>
+                            </div>
+                            <div class="recipe-instructions">
+                                <h4>Preparación:</h4>
+                                <ol>
+                                    <li>En un recipiente grande, mezcla la harina, el azúcar, la canela y el polvo para hornear.</li>
+                                    <li>En otro recipiente, bate los huevos y añade la leche y la mantequilla derretida.</li>
+                                    <li>Vierte los ingredientes líquidos sobre los secos y mezcla hasta obtener una masa homogénea.</li>
+                                    <li>Calienta una sartén antiadherente a fuego medio y vierte pequeñas porciones de masa.</li>
+                                    <li>Cocina hasta que aparezcan burbujas en la superficie, voltea y cocina el otro lado.</li>
+                                    <li>Sirve los pancakes calientes decorados con los frutos rojos y un poco de miel.</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="recipe-tips">
+                            <h4>Consejos:</h4>
+                            <p>Para pancakes aún más esponjosos, deja reposar la masa durante 10 minutos antes de cocinar. También puedes añadir un poco de ralladura de limón para un toque cítrico extra.</p>
+                        </div>
+                        <div class="related-recipes">
+                            <h4>También podría interesarte:</h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <a href="#">Waffles de avena y plátano</a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="#">Tostadas francesas con canela</a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="#">Crepes de chocolate</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,17 +193,42 @@
     </div>
 </div>
             
- <div class="row">
-     <div class="col-lg-12">
-          <div class="footer">
-                <p>© Las Recetas de la Felicidad</p>
-          </div>
-      </div>
- </div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="footer">
+            <p>© Las Recetas de la Felicidad</p>
+        </div>
+    </div>
+</div>
 
 <script src="~/assets/js/lib/jquery.min.js"></script>
 <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
 <script src="~/assets/js/lib/menubar/sidebar.js"></script>
-<script src="~/assets/js/lib/preloader/pace.min.js"></script>
 <script src="~/assets/js/lib/bootstrap.min.js"></script>
 <script src="~/assets/js/scripts.js"></script>
+
+<!-- Script para asegurar que el sidebar funcione correctamente en dispositivos móviles -->
+<script>
+    $(document).ready(function() {
+        // Toggle para sidebar en móviles
+        $('.hamburger.sidebar-toggle').on('click', function() {
+            $('body').toggleClass('sidebar-open');
+        });
+        
+        // Cerrar sidebar al hacer clic fuera en dispositivos móviles
+        $(document).on('click', function(e) {
+            if ($(window).width() <= 767) {
+                if (!$(e.target).closest('.sidebar, .hamburger.sidebar-toggle').length) {
+                    $('body').removeClass('sidebar-open');
+                }
+            }
+        });
+        
+        // Ajuste al cambiar tamaño de ventana
+        $(window).resize(function() {
+            if ($(window).width() > 767) {
+                $('body').removeClass('sidebar-open');
+            }
+        });
+    });
+</script>
