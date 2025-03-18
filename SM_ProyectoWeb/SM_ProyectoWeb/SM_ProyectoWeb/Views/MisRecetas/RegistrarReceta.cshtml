@@ -1,0 +1,693 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recetas de la Felicidad</title>
+    <link rel="stylesheet" href="~/assets/css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
+    <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <style>
+        .recipe-card {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 25px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+            .recipe-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            }
+
+        .recipe-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .recipe-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s;
+            }
+
+        .recipe-card:hover .recipe-image img {
+            transform: scale(1.05);
+        }
+
+        .recipe-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .recipe-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .recipe-category {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .recipe-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .recipe-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .recipe-btn-view {
+            background: #4e73df;
+            color: white;
+        }
+
+            .recipe-btn-view:hover {
+                background: #375ad3;
+            }
+
+        .recipe-btn-save {
+            background: #f8f9fa;
+            color: #555;
+        }
+
+            .recipe-btn-save:hover {
+                background: #e2e6ea;
+            }
+
+        .recipe-filter {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('~/img/food-hero.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+            .hero-section h1 {
+                font-size: 36px;
+                margin-bottom: 15px;
+            }
+
+            .hero-section p {
+                font-size: 18px;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        .featured-recipe {
+            margin-bottom: 40px;
+        }
+
+            .featured-recipe img {
+                border-radius: 8px;
+                width: 100%;
+                max-height: 400px;
+                object-fit: cover;
+            }
+
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+        }
+
+        .custom-checkbox .custom-control-label {
+            font-weight: normal;
+        }
+
+        .submit-btn {
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+            .submit-btn:hover {
+                background: #375ad3;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+
+            .submit-btn:active {
+                transform: translateY(0);
+            }
+
+        .cancel-btn {
+            background: #f8f9fa;
+            color: #555;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 15px;
+            margin-right: 10px;
+        }
+
+            .cancel-btn:hover {
+                background: #e2e6ea;
+            }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+            .image-preview img {
+                max-width: 100%;
+                max-height: 100%;
+                display: none;
+            }
+
+        .image-preview-text {
+            color: #aaa;
+            font-size: 16px;
+        }
+
+        .image-preview.has-image .image-preview-text {
+            display: none;
+        }
+
+        .image-preview.has-image img {
+            display: block;
+        }
+
+        .section-icon {
+            background: #f1f5ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #4e73df;
+        }
+
+        .ingredient-row {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .add-ingredient-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+            .add-ingredient-btn:hover {
+                background: #218838;
+            }
+
+        .remove-ingredient {
+            color: #dc3545;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .card-header-action {
+            float: right;
+        }
+
+        .help-tip {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .categories-select {
+            height: 46px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+                <ul>
+                    <li class="label">MENÚ PRINCIPAL</li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                        <ul>
+                            <li><a href="@Url.Action("DesayunosDestacados","Categorias")">Los más Destacadas</a></li>
+                            <li><a href="@Url.Action("DesayunosRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Entradas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("EntradasDestacados","Categorias")">Las más Destacadas</a></li>
+                            <li><a href="@Url.Action("EntradasRecientes","Categorias")">Añadidas Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Platos Fuertes <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PlatosFuertesDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PlatosFuertesRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PostresRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Mis Recetas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("Index","MisRecetas")">Recetas</a></li>
+                            <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
+                            <li><a href="@Url.Action("Favoritas","Recetas")">Marcadas como Favoritas</a></li>
+                            <li><a href="@Url.Action("MisComentarios","Comentarios")">Comentarios</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <ul>
+                            <li class="header-icon dib">
+                                <span class="user-avatar">John <i class="ti-angle-down f-s-10"></i></span>
+                                <div class="drop-down dropdown-profile">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                            <li><a href="#"><i class="ti-settings"></i> <span>Ajustes</span></a></li>
+                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1>Descubre el placer de cocinar</h1>
+                    <p>Explora cientos de recetas deliciosas y fáciles de preparar</p>
+                </div> 
+            </div>
+
+            <div class="content-wrap">
+                <div class="main">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h2>Agregar Nueva Receta</h2>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-8 col-md-12">
+                                <form method="post" action="@Url.Action("GuardarReceta","MisRecetas")" enctype="multipart/form-data">
+                                    <div class="form-section">
+                                        <h4 class="form-title">
+                                            <span class="section-icon"><i class="ti-info-alt"></i></span>
+                                            Información Básica
+                                        </h4>
+
+                                        <div class="form-group">
+                                            <label for="Titulo" class="required-field">Título de la Receta</label>
+                                            <input type="text" class="form-control" id="Titulo" name="Titulo" required placeholder="Ej: Pastel de Chocolate Casero">
+                                            <small class="help-tip">Elige un título claro y descriptivo (máximo 100 caracteres)</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="Id_Categoria" class="required-field">Categoría</label>
+                                            <select class="form-control categories-select" id="Id_Categoria" name="Id_Categoria" required>
+                                                <option value="" disabled selected>Selecciona una categoría</option>
+                                                <option value="1">Desayunos</option>
+                                                <option value="2">Entradas</option>
+                                                <option value="3">Platos Fuertes</option>
+                                                <option value="4">Postres</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="Descripcion" class="required-field">Descripción</label>
+                                            <textarea class="form-control" id="Descripcion" name="Descripcion" required placeholder="Describe brevemente tu receta, su origen o cualquier dato interesante..."></textarea>
+                                            <small class="help-tip">Una buena descripción ayuda a que otros usuarios encuentren tu receta (máximo 500 caracteres)</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="PlatoReciente" name="PlatoReciente">
+                                                <label class="custom-control-label" for="PlatoReciente">Marcar como plato reciente</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="PlatoDestacada" name="PlatoDestacada">
+                                                <label class="custom-control-label" for="PlatoDestacada">Marcar como plato destacado</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-section">
+                                        <h4 class="form-title">
+                                            <span class="section-icon"><i class="ti-shopping-cart"></i></span>
+                                            Ingredientes
+                                        </h4>
+
+                                        <div class="form-group">
+                                            <label for="Ingrediente" class="required-field">Lista de Ingredientes</label>
+                                            <div id="ingredientes-container">
+                                                <div class="ingredient-row">
+                                                    <input type="text" class="form-control" name="Ingrediente" placeholder="Ej: 2 tazas de harina" required>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="add-ingredient-btn mt-2" id="add-ingredient">
+                                                <i class="ti-plus"></i> Agregar más ingredientes
+                                            </button>
+                                            <small class="help-tip">Incluye las cantidades y unidades de medida para cada ingrediente</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-section">
+                                        <h4 class="form-title">
+                                            <span class="section-icon"><i class="ti-image"></i></span>
+                                            Imagen de la Receta
+                                        </h4>
+
+                                        <div class="form-group">
+                                            <label for="Imagen" class="required-field">Subir Imagen</label>
+                                            <div class="image-preview" id="imagePreview">
+                                                <span class="image-preview-text">Vista previa de la imagen</span>
+                                                <img src="" alt="Vista previa de la imagen">
+                                            </div>
+                                            <input type="file" class="form-control-file" id="Imagen" name="Imagen" accept="image/*" required>
+                                            <small class="help-tip">La imagen debe ser clara y mostrar el plato terminado (formatos: JPG, PNG)</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right mb-4">
+                                        <a href="@Url.Action("Index","MisRecetas")" class="btn cancel-btn">Cancelar</a>
+                                        <button type="submit" class="btn submit-btn">Guardar Receta</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="col-lg-4 col-md-12">
+                                <div class="form-section">
+                                    <h4 class="form-title">
+                                        <i class="ti-help-alt"></i> Consejos para tu receta
+                                    </h4>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Asegúrate de incluir todos los ingredientes necesarios</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Usa un título descriptivo y atractivo</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Sube una foto clara del plato terminado</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Proporciona medidas precisas en tus ingredientes</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Incluye el tiempo de preparación y cocción</li>
+                                    </ul>
+                                </div>
+
+                                <div class="form-section">
+                                    <h4 class="form-title">
+                                        <i class="ti-ruler"></i> Medidas y Equivalencias
+                                    </h4>
+                                    <div class="conversion-table">
+                                        <h6 class="mb-3">Volumen</h6>
+                                        <table class="table table-sm table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>1 cucharadita (cdta)</td>
+                                                    <td>5 ml</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 cucharada (cda)</td>
+                                                    <td>15 ml</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>¼ taza</td>
+                                                    <td>60 ml</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>⅓ taza</td>
+                                                    <td>80 ml</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>½ taza</td>
+                                                    <td>120 ml</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 taza</td>
+                                                    <td>240 ml</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 vaso</td>
+                                                    <td>200-250 ml</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <h6 class="mt-4 mb-3">Peso</h6>
+                                        <table class="table table-sm table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>1 onza (oz)</td>
+                                                    <td>28 gramos</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>¼ libra (lb)</td>
+                                                    <td>113 gramos</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>½ libra (lb)</td>
+                                                    <td>227 gramos</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 libra (lb)</td>
+                                                    <td>454 gramos</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <h6 class="mt-4 mb-3">Equivalencias comunes</h6>
+                                        <table class="table table-sm table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>1 taza de harina</td>
+                                                    <td>~120-140 gramos</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 taza de azúcar</td>
+                                                    <td>~200 gramos</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 taza de arroz</td>
+                                                    <td>~185 gramos</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 taza de mantequilla</td>
+                                                    <td>~225 gramos</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1 taza de líquido</td>
+                                                    <td>~240 ml</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="alert alert-info mt-3" role="alert">
+                                            <i class="ti-info-alt mr-2"></i> Estas medidas son aproximadas y pueden variar según los ingredientes específicos.
+                                        </div>
+                                    </div>
+                                </div>
+                                        </div>
+                                        <script src="~/assets/js/lib/jquery.min.js"></script>
+                                        <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+                                        <script src="~/assets/js/lib/menubar/sidebar.js"></script>
+                                        <script src="~/assets/js/lib/preloader/pace.min.js"></script>
+                                        <script src="~/assets/js/lib/bootstrap.min.js"></script>
+                                        <script src="~/assets/js/scripts.js"></script>
+
+                                        <script>
+                                            // Agregar más campos de ingredientes
+                                            document.getElementById('add-ingredient').addEventListener('click', function() {
+                                                const container = document.getElementById('ingredientes-container');
+                                                const newRow = document.createElement('div');
+                                                newRow.className = 'ingredient-row';
+                                                newRow.innerHTML = `
+                                                    <input type="text" class="form-control" name="Ingrediente" placeholder="Ej: 2 tazas de harina">
+                                                    <span class="remove-ingredient ml-2"><i class="ti-trash"></i></span>
+                                                `;
+                                                container.appendChild(newRow);
+
+                                                // Agregar evento para eliminar ingrediente
+                                                newRow.querySelector('.remove-ingredient').addEventListener('click', function() {
+                                                    container.removeChild(newRow);
+                                                });
+                                            });
+
+                                            // Vista previa de la imagen
+                                            document.getElementById('Imagen').addEventListener('change', function(e) {
+                                                const preview = document.getElementById('imagePreview');
+                                                const img = preview.querySelector('img');
+                                                const file = e.target.files[0];
+
+                                                if (file) {
+                                                    const reader = new FileReader();
+
+                                                    reader.onload = function(e) {
+                                                        img.src = e.target.result;
+                                                        preview.classList.add('has-image');
+                                                    }
+
+                                                    reader.readAsDataURL(file);
+                                                } else {
+                                                    img.src = '';
+                                                    preview.classList.remove('has-image');
+                                                }
+                                            });
+
+                                            // Agregar la fecha actual al campo oculto de fecha_publicacion
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                const now = new Date();
+                                                const formattedDate = now.toISOString().slice(0, 16);
+                                                const dateField = document.createElement('input');
+                                                dateField.type = 'hidden';
+                                                dateField.name = 'Fecha_Publicacion';
+                                                dateField.value = formattedDate;
+                                                document.querySelector('form').appendChild(dateField);
+                                            });
+                                        </script>
+
+</body>
+
+</html>

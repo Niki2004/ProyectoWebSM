@@ -22,51 +22,31 @@ namespace SM_ProyectoWeb.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult RegistrarReceta()
+        {
+            return View();
+        }
+
+
         [HttpPost]
         public IActionResult RegistrarReceta(RecetaModel model)
         {
-            if (model == null)
+            using (var api = _httpClient.CreateClient())
             {
-                TempData["Error"] = "Los datos de la receta son inválidos.";
-                return RedirectToAction("RegistrarReceta");
-            }
+                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarReceta";
 
-            try
-            {
-                using (var api = _httpClient.CreateClient())
+                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                var result = api.PostAsJsonAsync(url, model).Result;
+
+                if (result.IsSuccessStatusCode)
                 {
-                    var url = _configuration.GetSection("Variables:urlApi").Value + "RegistrarReceta";
-
-                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-
-                    var response = api.PostAsJsonAsync(url, model).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
-
-                        if (result != null && result.Indicador)
-                        {
-                            TempData["Mensaje"] = "La receta se ha registrado correctamente.";
-                            return RedirectToAction("Index");
-                        }
-                        else
-                        {
-                            TempData["Error"] = result?.Mensaje ?? "Hubo un problema al registrar la receta.";
-                        }
-                    }
-                    else
-                    {
-                        TempData["Error"] = "Error en la comunicación con el servidor.";
-                    }
+                    return RedirectToAction("Recetas", "MisRecetas");
                 }
             }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Error al registrar la receta: " + ex.Message;
-            }
 
-            return RedirectToAction("RegistrarReceta");
+            return View();
         }
+
     }
 }
