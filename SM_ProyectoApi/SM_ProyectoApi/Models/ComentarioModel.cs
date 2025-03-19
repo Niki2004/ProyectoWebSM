@@ -10,6 +10,8 @@
 
         public string? Contenido { get; set; }
 
+        public string? Titulo { get; set; } //Esto debería ser un campo en la tabla de recetas
+
         public DateTime Fecha_Comentario { get; set; }
       
     }

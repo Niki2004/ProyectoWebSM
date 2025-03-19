@@ -114,7 +114,6 @@ namespace SM_ProyectoApi.Controllers
             return Ok(respuesta);
         }
 
-
         [HttpPost]
         [Route("RegistrarComentario")]
         public IActionResult RegistrarComentario(ComentarioModel model)
@@ -172,7 +171,6 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
-
         [HttpDelete]
         [Route("EliminarComentario")]
         public IActionResult EliminarComentario(long idComentario)
@@ -206,9 +204,6 @@ namespace SM_ProyectoApi.Controllers
             return Ok(respuesta);
         }
 
-
-
-
         [HttpGet]
         [Route("ConsultarComentario")]
         public IActionResult ConsultarComentario(long Id_Comentario)
@@ -235,7 +230,6 @@ namespace SM_ProyectoApi.Controllers
                 return Ok(respuesta);
             }
         }
-
 
     }
 }
