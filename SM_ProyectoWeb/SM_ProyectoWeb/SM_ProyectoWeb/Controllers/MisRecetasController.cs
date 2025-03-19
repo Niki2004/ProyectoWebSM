@@ -1,4 +1,4 @@
-﻿    using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SM_ProyectoWeb.Models;
 using System.Net.Http.Headers;
 
