@@ -62,7 +62,6 @@ BEGIN
 END;
 GO
 
-
 ------------------------ EntradasDestacados ----------------------
 
 CREATE PROCEDURE EntradasDestacados
@@ -240,31 +239,25 @@ CREATE PROCEDURE EliminarComentario
     @Id_Comentario BIGINT
 AS
 BEGIN
-    -- Eliminar el comentario correspondiente al Id_Comentario
     DELETE FROM [dbo].[Comentario]
     WHERE Id_Comentario = @Id_Comentario;
 END;
 
 
 ------------------------ ConsultarComentario ----------------------
+
 CREATE PROCEDURE [dbo].[ConsultarComentario]
-    @Id_Comentario BIGINT
+	@Id_Comentario BIGINT
 AS
 BEGIN
-    -- Si el ID proporcionado es 0, se convierte en NULL para listar todos los comentarios
-    IF(@Id_Comentario = 0)
-        SET @Id_Comentario = NULL
+	
+	IF(@Id_Comentario = 0) 
+	SET @Id_Comentario = NULL
 
-    -- Consulta de comentarios con la información de la receta asociada
-    SELECT
-        C.Id_Comentario, 
-        C.Id_Usuario, 
-        C.Id_Receta, 
-        R.Titulo, 
-        C.Contenido, 
-        C.Fecha_Comentario
-    FROM Comentario C
-    INNER JOIN Receta R ON C.Id_Receta = R.Id_Receta
-    WHERE C.Id_Comentario = ISNULL(@Id_Comentario, C.Id_Comentario)
+	SELECT	C.Id_Comentario, C.Id_Usuario, C.Id_Receta, R.Titulo, C.Contenido, C.Fecha_Comentario
+	FROM	Comentario C
+	INNER	JOIN Receta R ON C.Id_Receta = R.Id_Receta
+	WHERE	C.Id_Comentario = ISNULL(@Id_Comentario, C.Id_Comentario)
+
 END
 GO
