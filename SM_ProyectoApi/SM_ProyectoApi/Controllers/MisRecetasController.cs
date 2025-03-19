@@ -7,7 +7,7 @@ using System.Data;
 
 namespace SM_ProyectoApi.Controllers
 {
-    [Authorize]
+   
     [Route("api/[controller]")]
     [ApiController]
     public class MisRecetasController : Controller
@@ -204,6 +204,36 @@ namespace SM_ProyectoApi.Controllers
             }
 
             return Ok(respuesta);
+        }
+
+
+
+
+        [HttpGet]
+        [Route("ConsultarComentario")]
+        public IActionResult ConsultarComentario(long Id_Comentario)
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var result = context.Query<ComentarioModel>("ConsultarComentario",
+                    new { Id_Comentario });
+
+                var respuesta = new RespuestaModel();
+
+                if (result != null)
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Información consultada";
+                    respuesta.Datos = result;
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "No hay información registrada en este momento";
+                }
+
+                return Ok(respuesta);
+            }
         }
 
 

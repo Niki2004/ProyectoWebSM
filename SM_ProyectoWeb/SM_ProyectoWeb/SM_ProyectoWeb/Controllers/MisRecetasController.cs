@@ -48,5 +48,32 @@ namespace SM_ProyectoWeb.Controllers
             return View();
         }
 
+
+        [HttpGet]
+        public IActionResult RegistrarComentario()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult RegistrarComentario(ComentarioModel model)
+        {
+            using (var api = _httpClient.CreateClient())
+            {
+                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarComentario";
+
+                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                var result = api.PostAsJsonAsync(url, model).Result;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("RegistrarComentario", "MisRecetas");
+                }
+            }
+
+            return View();
+        }
+
     }
 }

@@ -1,0 +1,673 @@
+﻿@using SM_ProyectoWeb.Models
+@model ComentarioModel
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recetas de la Felicidad - Comentarios</title>
+    <link rel="stylesheet" href="~/assets/css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
+    <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <style>
+        .recipe-card {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 25px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+            .recipe-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            }
+
+        .recipe-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .recipe-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s;
+            }
+
+        .recipe-card:hover .recipe-image img {
+            transform: scale(1.05);
+        }
+
+        .recipe-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .recipe-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .recipe-category {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .recipe-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .recipe-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .recipe-btn-view {
+            background: #4e73df;
+            color: white;
+        }
+
+            .recipe-btn-view:hover {
+                background: #375ad3;
+            }
+
+        .recipe-btn-save {
+            background: #f8f9fa;
+            color: #555;
+        }
+
+            .recipe-btn-save:hover {
+                background: #e2e6ea;
+            }
+
+        .recipe-filter {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('~/img/food-hero.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+            .hero-section h1 {
+                font-size: 36px;
+                margin-bottom: 15px;
+            }
+
+            .hero-section p {
+                font-size: 18px;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        .featured-recipe {
+            margin-bottom: 40px;
+        }
+
+            .featured-recipe img {
+                border-radius: 8px;
+                width: 100%;
+                max-height: 400px;
+                object-fit: cover;
+            }
+
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+        }
+
+        .custom-checkbox .custom-control-label {
+            font-weight: normal;
+        }
+
+        .submit-btn {
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+            .submit-btn:hover {
+                background: #375ad3;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+
+            .submit-btn:active {
+                transform: translateY(0);
+            }
+
+        .cancel-btn {
+            background: #f8f9fa;
+            color: #555;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 15px;
+            margin-right: 10px;
+        }
+
+            .cancel-btn:hover {
+                background: #e2e6ea;
+            }
+
+        .section-icon {
+            background: #f1f5ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #4e73df;
+        }
+
+        .card-header-action {
+            float: right;
+        }
+
+        .help-tip {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .comment-list {
+            margin-top: 20px;
+        }
+
+        .comment-item {
+            border-left: 3px solid #4e73df;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .comment-date {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .comment-body {
+            color: #555;
+        }
+
+        .recipe-select {
+            height: 46px;
+        }
+
+        .star-rating {
+            margin-top: 10px;
+        }
+
+        .rating-text {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .comment-tabs {
+            margin-bottom: 20px;
+        }
+
+            .comment-tabs .nav-link {
+                border-radius: 8px;
+                color: #555;
+                padding: 10px 15px;
+            }
+
+                .comment-tabs .nav-link.active {
+                    background-color: #4e73df;
+                    color: white;
+                    border-color: #4e73df;
+                }
+
+        .recipe-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            .recipe-item:hover {
+                background: #f1f5ff;
+            }
+
+            .recipe-item img {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 4px;
+                margin-right: 15px;
+            }
+
+        .recipe-item-name {
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .recipe-item-category {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .time-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+                <ul>
+                    <li class="label">MENÚ PRINCIPAL</li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                        <ul>
+                            <li><a href="@Url.Action("DesayunosDestacados","Categorias")">Los más Destacadas</a></li>
+                            <li><a href="@Url.Action("DesayunosRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Entradas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("EntradasDestacados","Categorias")">Las más Destacadas</a></li>
+                            <li><a href="@Url.Action("EntradasRecientes","Categorias")">Añadidas Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Platos Fuertes <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PlatosFuertesDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PlatosFuertesRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PostresRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="active">
+                        <a class="sidebar-sub-toggle">Mis Recetas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("Index","MisRecetas")">Recetas</a></li>
+                            <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
+                            <li><a href="@Url.Action("Favoritas","Recetas")">Marcadas como Favoritas</a></li>
+                            <li class="active"><a href="@Url.Action("RegistrarComentario","MisRecetas")">Comentarios</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <ul>
+                            <li class="header-icon dib">
+                                <span class="user-avatar">John <i class="ti-angle-down f-s-10"></i></span>
+                                <div class="drop-down dropdown-profile">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                            <li><a href="#"><i class="ti-settings"></i> <span>Ajustes</span></a></li>
+                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1>Comparte tu opinión</h1>
+                    <p>Comenta y valora las recetas de nuestra comunidad</p>
+                </div>
+            </div>
+
+            <div class="content-wrap">
+                <div class="main">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h2>Comentarios de Recetas</h2>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-8 col-md-12">
+                                <!-- Tabs de navegación -->
+                                <ul class="nav nav-tabs comment-tabs" id="commentTabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="add-comment-tab" data-toggle="tab" href="#add-comment" role="tab" aria-controls="add-comment" aria-selected="true">
+                                            <i class="ti-comment-alt mr-2"></i>Agregar Comentario
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="my-comments-tab" data-toggle="tab" href="#my-comments" role="tab" aria-controls="my-comments" aria-selected="false">
+                                            <i class="ti-comment mr-2"></i>Mis Comentarios
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content" id="commentTabsContent">
+                                    <!-- Pestaña para agregar comentario -->
+                                    <div class="tab-pane fade show active" id="add-comment" role="tabpanel" aria-labelledby="add-comment-tab">
+                                        <form asp-action="RegistrarComentario" asp-controller="MisRecetas">
+                                            <div class="form-section">
+                                                <h4 class="form-title">
+                                                    <span class="section-icon"><i class="ti-comment-alt"></i></span>
+                                                    Nuevo Comentario
+                                                </h4>
+
+                                                <!-- Campo oculto para el ID del usuario -->
+                                                <input type="hidden" class="form-control input-lg" asp-for="Id_Usuario" placeholder="Id_Usuario" />
+
+                                                <div class="form-group">
+                                                    <label for="Id_Receta" class="required-field">Seleccionar Receta</label>
+                                                    < <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
+                                                </div>
+
+                                                <div class="form-group mt-4">
+                                                    <label for="Contenido" class="required-field">Tu Comentario</label>
+                                                    <textarea class="form-control" id="Contenido" name="Contenido" required placeholder="Comparte tu experiencia con esta receta..."></textarea>
+                                                    <small class="help-tip">Tu comentario ayudará a otros usuarios a decidir si preparar esta receta</small>
+                                                </div>
+
+                                                <div class="text-right mt-4">
+                                                    <button type="submit" class="btn submit-btn">
+                                                        <i class="ti-comment-alt mr-2"></i>Publicar Comentario
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Pestaña para ver mis comentarios -->
+                                    <div class="tab-pane fade" id="my-comments" role="tabpanel" aria-labelledby="my-comments-tab">
+                                        <div class="form-section">
+                                            <h4 class="form-title">
+                                                <span class="section-icon"><i class="ti-comment"></i></span>
+                                                Comentarios Realizados
+                                            </h4>
+
+                                            <div class="comment-list">
+                                                <!-- Ejemplo de comentario -->
+                                                <div class="comment-item">
+                                                    <div class="comment-header">
+                                                        <div class="comment-author">Pastel de Chocolate</div>
+                                                        <div class="comment-date">18/03/2025</div>
+                                                    </div>
+                                                    <div class="comment-body">
+                                                        <p>Esta receta quedó deliciosa. El chocolate quedó muy cremoso y el bizcocho esponjoso. Lo recomiendo mucho para ocasiones especiales.</p>
+                                                    </div>
+                                                    <div class="comment-actions mt-2">
+                                                        <button class="btn btn-sm btn-outline-primary mr-2">
+                                                            <i class="ti-pencil"></i> Editar
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger">
+                                                            <i class="ti-trash"></i> Eliminar
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Ejemplo de otro comentario -->
+                                                <div class="comment-item">
+                                                    <div class="comment-header">
+                                                        <div class="comment-author">Ensalada César</div>
+                                                        <div class="comment-date">15/03/2025</div>
+                                                    </div>
+                                                    <div class="comment-body">
+                                                        <p>La salsa quedó espectacular. Recomendaría añadir un poco más de ajo para darle más sabor. Por lo demás, excelente receta.</p>
+                                                    </div>
+                                                    <div class="comment-actions mt-2">
+                                                        <button class="btn btn-sm btn-outline-primary mr-2">
+                                                            <i class="ti-pencil"></i> Editar
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger">
+                                                            <i class="ti-trash"></i> Eliminar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-12">
+                                <div class="form-section">
+                                    <h4 class="form-title">
+                                        <i class="ti-timer"></i> Recetas Rápidas
+                                    </h4>
+                                    <p class="mb-3">Opciones que se preparan en menos de 30 minutos</p>
+
+                                    <div class="recipe-selector">
+                                        <!-- Lista de recetas rápidas -->
+                                        <div class="recipe-item" onclick="selectRecipe(6)">
+                                            <div>
+                                                <p class="recipe-item-name">Huevos Revueltos <span class="time-badge">15 min</span></p>
+                                                <span class="recipe-item-category">Desayunos</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="recipe-item" onclick="selectRecipe(7)">
+                                            <div>
+                                                <p class="recipe-item-name">Ensalada de Atún <span class="time-badge">10 min</span></p>
+                                                <span class="recipe-item-category">Entradas</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="recipe-item" onclick="selectRecipe(8)">
+                                            <div>
+                                                <p class="recipe-item-name">Pasta con Pesto <span class="time-badge">20 min</span></p>
+                                                <span class="recipe-item-category">Platos Fuertes</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="recipe-item" onclick="selectRecipe(9)">
+                                            <div>
+                                                <p class="recipe-item-name">Quesadillas <span class="time-badge">15 min</span></p>
+                                                <span class="recipe-item-category">Platos Fuertes</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="recipe-item" onclick="selectRecipe(10)">
+                                            <div>
+                                                <p class="recipe-item-name">Smoothie de Frutas <span class="time-badge">5 min</span></p>
+                                                <span class="recipe-item-category">Bebidas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    <h4 class="form-title">
+                                        <i class="ti-help-alt"></i> Consejos para comentar
+                                    </h4>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Sé específico sobre lo que te gustó o no te gustó</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Menciona si hiciste alguna modificación a la receta</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Comparte tips que puedan ayudar a otros</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Mantén un tono constructivo y respetuoso</li>
+                                        <li class="mb-3"><i class="ti-check text-success mr-2"></i> Indica el nivel de dificultad que encontraste</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <script src="~/assets/js/lib/menubar/sidebar.js"></script>
+    <script src="~/assets/js/lib/preloader/pace.min.js"></script>
+    <script src="~/assets/js/lib/bootstrap.min.js"></script>
+    <script src="~/assets/js/scripts.js"></script>
+
+    <script>
+        // Seleccionar receta desde la lista lateral
+        function selectRecipe(recipeId) {
+            document.getElementById('Id_Receta').value = recipeId;
+            // Hacer scroll al formulario y enfocar el área de texto
+            document.getElementById('Contenido').focus();
+            // Activar la pestaña de agregar comentario
+            $('#commentTabs a[href="#add-comment"]').tab('show');
+        }
+
+        // Agregar la fecha actual al campo oculto de fecha_comentario
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const formattedDate = now.toISOString().slice(0, 16);
+            const dateField = document.createElement('input');
+            dateField.type = 'hidden';
+            dateField.name = 'Fecha_Comentario';
+            dateField.value = formattedDate;
+            document.querySelector('form').appendChild(dateField);
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using SM_ProyectoWeb.Models
+@model RecetaModel 
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
@@ -373,7 +376,7 @@
                             <li><a href="@Url.Action("Index","MisRecetas")">Recetas</a></li>
                             <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
                             <li><a href="@Url.Action("Favoritas","Recetas")">Marcadas como Favoritas</a></li>
-                            <li><a href="@Url.Action("MisComentarios","Comentarios")">Comentarios</a></li>
+                            <li><a href="@Url.Action("RegistrarComentario","MisRecetas")">Comentarios</a></li>
                         </ul>
                     </li>
                 </ul>
