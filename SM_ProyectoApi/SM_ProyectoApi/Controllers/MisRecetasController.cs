@@ -7,7 +7,7 @@ using System.Data;
 
 namespace SM_ProyectoApi.Controllers
 {
-    [Authorize]
+    //[Authorize] quitarlo despues para hacer login 
     [Route("api/[controller]")]
     [ApiController]
     public class MisRecetasController : Controller
@@ -229,8 +229,39 @@ namespace SM_ProyectoApi.Controllers
 
                 return Ok(respuesta);
             }
+
         }
 
+
+
+
+        ///------------------------------------Mostrar todas las recetas que existen ------------------
+
+        [HttpGet]
+        [Route("ConsultarRecetas")]
+        public IActionResult RecetasExistentes()
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var desayunos = context.Query<RecetaModel>("ConsultarRecetas");
+
+                var respuesta = new RespuestaModel();
+
+                if (desayunos != null && desayunos.Any())
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Recetas existentes obtenidos correctamente";
+                    respuesta.Datos = desayunos;
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "No se encontraron recetas existentes";
+                }
+
+                return Ok(respuesta);
+            }
+        }
     }
 }
 

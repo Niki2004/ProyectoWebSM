@@ -19,5 +19,8 @@
         public string? Ingrediente { get; set; }
 
         public string Imagen { get; set; }
+
+        public string? Nombre_Categoria { get; set; }
+
     }
 }
