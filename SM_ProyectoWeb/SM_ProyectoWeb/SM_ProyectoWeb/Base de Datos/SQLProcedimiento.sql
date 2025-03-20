@@ -247,17 +247,19 @@ END;
 ------------------------ ConsultarComentario ----------------------
 
 CREATE PROCEDURE [dbo].[ConsultarComentario]
-	@Id_Comentario BIGINT
+    @Id_Comentario BIGINT,
+    @Id_Usuario BIGINT = NULL -- Nuevo parámetro opcional
 AS
 BEGIN
-	
-	IF(@Id_Comentario = 0) 
-	SET @Id_Comentario = NULL
 
-	SELECT	C.Id_Comentario, C.Id_Usuario, C.Id_Receta, R.Titulo, C.Contenido, C.Fecha_Comentario
-	FROM	Comentario C
-	INNER	JOIN Receta R ON C.Id_Receta = R.Id_Receta
-	WHERE	C.Id_Comentario = ISNULL(@Id_Comentario, C.Id_Comentario)
+    IF(@Id_Comentario = 0) 
+        SET @Id_Comentario = NULL
+
+    SELECT C.Id_Comentario, C.Id_Usuario, C.Id_Receta, R.Titulo, C.Contenido, C.Fecha_Comentario
+    FROM Comentario C
+    INNER JOIN Receta R ON C.Id_Receta = R.Id_Receta
+    WHERE (C.Id_Comentario = @Id_Comentario OR @Id_Comentario IS NULL)
+    AND (C.Id_Usuario = @Id_Usuario OR @Id_Usuario IS NULL)
+    ORDER BY C.Fecha_Comentario DESC
 
 END
-GO
