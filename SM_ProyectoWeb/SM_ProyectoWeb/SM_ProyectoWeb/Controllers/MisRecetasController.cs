@@ -21,8 +21,6 @@ namespace SM_ProyectoWeb.Controllers
             _utilitarios = utilitarios;
         }
 
-      
-
         [HttpGet]
         public IActionResult RegistrarReceta()
         {
@@ -100,16 +98,17 @@ namespace SM_ProyectoWeb.Controllers
         }
 
 
-       public IActionResult ConsultarRecetas()
-{
-    using (var api = _httpClient.CreateClient())
-    {
-        var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetass";
+       public IActionResult ConsultarRecetas(RecetaModel model)
+        {
+            using (var api = _httpClient.CreateClient())
+         {
 
-        api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-        var response = api.GetAsync(url).Result;
+                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetas";
 
-        if (response.IsSuccessStatusCode)
+                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                var response = api.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
         {
             var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
 
@@ -119,10 +118,10 @@ namespace SM_ProyectoWeb.Controllers
                 return View(datosResult);
             }
         }
-    }
+          }
 
-    return View(new List<RecetaModel>());
-}
+        return View(new List<RecetaModel>());
+    }
 
 
 

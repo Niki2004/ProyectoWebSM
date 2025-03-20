@@ -7,7 +7,7 @@ using System.Data;
 
 namespace SM_ProyectoApi.Controllers
 {
-    //[Authorize] quitarlo despues para hacer login 
+    [Authorize] 
     [Route("api/[controller]")]
     [ApiController]
     public class MisRecetasController : Controller
@@ -19,7 +19,6 @@ namespace SM_ProyectoApi.Controllers
         {
             _configuration = configuration;
         }
-
 
         [HttpPost]
         [Route("RegistrarReceta")]
@@ -231,9 +230,6 @@ namespace SM_ProyectoApi.Controllers
             }
 
         }
-
-
-
 
         ///------------------------------------Mostrar todas las recetas que existen ------------------
 

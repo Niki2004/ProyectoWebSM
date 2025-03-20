@@ -220,38 +220,7 @@
         </div>
     </div>
 
-    <div class="header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="float-left">
-                        <div class="hamburger sidebar-toggle">
-                            <span class="line"></span>
-                            <span class="line"></span>
-                            <span class="line"></span>
-                        </div>
-                    </div>
-                    <div class="float-right">
-                        <ul>
-                            <li class="header-icon dib">
-                                <span class="user-avatar">John <i class="ti-angle-down f-s-10"></i></span>
-                                <div class="drop-down dropdown-profile">
-                                    <div class="dropdown-content-body">
-                                        <ul>
-                                            <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
-                                            <li><a href="#"><i class="ti-settings"></i> <span>Ajustes</span></a></li>
-                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+   
     <div class="content-wrap">
         <div class="main">
             <div class="container-fluid">
@@ -265,156 +234,57 @@
                     <div class="col-lg-12 p-r-0 title-margin-right">
                         <div class="page-header">
                             <div class="page-title">
-                                <h2>Recetas destacadas</h2>
+                                <h2 class="text-center">Tus Recetas, tu felicidad</h2>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Filters -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="recipe-filter">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <select class="form-control">
-                                        <option>Todas las categorías</option>
-                                        <option>Desayunos</option>
-                                        <option>Entradas</option>
-                                        <option>Platos Fuertes</option>
-                                        <option>Postres</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-control">
-                                        <option>Ordenar por</option>
-                                        <option>Más populares</option>
-                                        <option>Más recientes</option>
-                                        <option>Más fáciles</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Buscar recetas...">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button"><i class="ti-search"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Featured Recipe -->
-                <div class="row featured-recipe">
+               <div class="row featured-recipe">
                     <div class="col-lg-6">
                         <img src="~/img/pancake.jpeg" alt="Pancakes de Frutos Rojos con Canela">
                     </div>
                     <div class="col-lg-6">
                         <h3>Pancakes de Frutos Rojos con Canela</h3>
-                        <p class="text-muted"><span class="recipe-category">Desayunos</span> • 25 minutos • Fácil</p>
+                        <p class="text-muted"><span class="recipe-category">Desayuno</span> • 25 minutos • Fácil</p>
                         <p>Deliciosos pancakes esponjosos acompañados de una mezcla de frutos rojos frescos y un toque de canela. El desayuno perfecto para comenzar el día con energía y buen sabor.</p>
                         <p><strong>Ingredientes principales:</strong> Harina, huevos, fresas, arándanos, frambuesas, canela, miel</p>
                        
                     </div>
                 </div>
 
-                <!-- Recipe Cards -->
                 <div class="row">
-                    <!-- Recipe Card 1 -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="recipe-card">
-                            <div class="recipe-image">
-                                <img src="/api/placeholder/400/320" alt="Pastel de chocolate">
-                                <div class="recipe-badge">Destacado</div>
-                            </div>
-                            <div class="recipe-content">
-                                <h4 class="recipe-title">Pastel de Chocolate con Ganache</h4>
-                                <p class="recipe-description">Un delicioso pastel de chocolate cubierto con un ganache suave y cremoso.</p>
-                                <div class="recipe-meta">
-                                    <span class="recipe-category">Postres</span>
-                                    <span>45 min</span>
+                    @foreach (var receta in Model)
+                    {
+                        <div class="col-lg-4 col-md-6">
+                            <div class="recipe-card">
+
+                                <div class="recipe-image">
+                                    <img src="@receta.Imagen" alt="@receta.Titulo">
+                                    @if (receta.PlatoDestacada)
+                                    {
+                                        <div class="recipe-badge">Destacado</div>
+                                    }
                                 </div>
-                                <div class="recipe-buttons">
-                                    <button class="recipe-btn recipe-btn-view">Ver receta</button>
-                                    <button class="recipe-btn recipe-btn-save"><i class="ti-heart"></i></button>
+
+                                <div class="recipe-content">
+                                    <h4 class="recipe-title">@receta.Titulo</h4>
+                                    <p class="recipe-description">@receta.Descripcion</p>
+                                    <div class="recipe-meta">
+                                        <span class="recipe-category">@receta.Nombre_Categoria</span>
+                                        <span>@receta.Fecha_Publicacion min</span>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-
-
-
-
-
-
-
-
-
-                 
-
-<div class="container">
-    <div class="row">
-        @foreach (var receta in Model)
-        {
-            <div class="col-lg-4 col-md-6">
-                <div class="recipe-card">
-                    <div class="recipe-image">
-                        <img src="@receta.Imagen" alt="@receta.Titulo">
-                        @if (receta.PlatoDestacada)
-                        {
-                            <div class="recipe-badge">Destacado</div>
-                        }
-                        @if (receta.PlatoReciente)
-                        {
-                            <div class="recipe-badge recipe-badge-new">Nuevo</div>
-                        }
-                    </div>
-                    <div class="recipe-content">
-                        <h4 class="recipe-title">@receta.Titulo</h4>
-                        <p class="recipe-description">@receta.Descripcion</p>
-                        <div class="recipe-meta">
-                            <span class="recipe-category">@receta.Nombre_Categoria</span>
-                            <span>@receta.Fecha_Publicacion.ToString("dd/MM/yyyy")</span>
-                        </div>
-                        <div class="recipe-buttons">
-                            <a href="@Url.Action("DetalleReceta", "Recetas", new { id = receta.Id_Receta })" class="recipe-btn recipe-btn-view">Ver receta</a>
-                            <button class="recipe-btn recipe-btn-save" data-id="@receta.Id_Receta"><i class="ti-heart"></i></button>
-                        </div>
-                    </div>
+                    }
                 </div>
-            </div>
-        }
-    </div>
-</div>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info text-center">
-        <h4>No hay recetas disponibles</h4>
-        <p>No se encontraron recetas para mostrar en este momento.</p>
-    </div>
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
             </div>
         </div>
     </div>
+
 
     <div class="row">
         <div class="col-lg-12">
@@ -429,6 +299,6 @@
     <script src="~/assets/js/lib/menubar/sidebar.js"></script>
     <script src="~/assets/js/lib/bootstrap.min.js"></script>
     <script src="~/assets/js/scripts.js"></script>
-
+                
 </body>
 </html>
