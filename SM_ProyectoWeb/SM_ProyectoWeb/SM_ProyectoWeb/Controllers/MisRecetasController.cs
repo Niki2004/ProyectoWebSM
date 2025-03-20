@@ -20,20 +20,10 @@ namespace SM_ProyectoWeb.Controllers
             _utilitarios = utilitarios;
         }
 
-
         public IActionResult Index()
         {
             return View();
         }
-
-        [HttpGet]
-        public IActionResult RegistrarReceta()
-        {
-            var datosResult = _utilitarios.ConsultarInfoRecetas(0);
-            CargarComentariosCombo();
-            return View(datosResult);
-        }
-
 
         [HttpPost]
         public IActionResult RegistrarReceta(RecetaModel model)
@@ -55,9 +45,18 @@ namespace SM_ProyectoWeb.Controllers
         }
 
 
+        //[HttpGet]
+        //public IActionResult ConsultarComentario()
+        //{
+        //    var datosResult = _utilitarios.ConsultarInfoRecetas(0);
+        //    return View(datosResult);
+        //}
+
+
         [HttpGet]
         public IActionResult RegistrarComentario()
         {
+            CargarComentariosCombo();
             return View();
         }
 

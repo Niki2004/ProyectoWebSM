@@ -22,7 +22,7 @@ namespace SM_ProyectoWeb.Dependencias
         {
             using (var api = _httpClient.CreateClient())
             {
-                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarComentarios?Id=" + Id_Receta;
+                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarComentario?Id=" + Id_Receta;
 
                 api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessor.HttpContext!.Session.GetString("Token"));
                 var response = api.GetAsync(url).Result;

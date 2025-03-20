@@ -508,11 +508,6 @@
                                                     <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
                                                 </div>
 
-                                                <div class="form-group col-md-12 mb-4">
-                                                    Recetas
-                                                    <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
-                                                </div>
-
                                                 <div class="form-group mt-4">
                                                     <label for="Contenido" class="required-field">Tu Comentario</label>
                                                     <input type="text" class="form-control input-lg" asp-for="Contenido" placeholder="Contenido">
@@ -530,7 +525,8 @@
                                         </form>
                                     </div>
 
-                                    <!-- Pestaña para ver mis comentarios -->
+@*  ---------------------------------- AQUÍ VA LA VISTA NUEVA  -------------------------- *@
+                                    <!-- -------------------------------------Pestaña para ver mis comentarios -->
                                     <div class="tab-pane fade" id="my-comments" role="tabpanel" aria-labelledby="my-comments-tab">
                                         <div class="form-section">
                                             <h4 class="form-title">
@@ -554,6 +550,9 @@
                                                         </button>
                                                         <button class="btn btn-sm btn-outline-danger">
                                                             <i class="ti-trash"></i> Eliminar
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger">
+                                                            <i class="ti-trash"></i> Agregar
                                                         </button>
                                                     </div>
                                                 </div>
@@ -651,9 +650,9 @@
     <script src="~/assets/js/lib/jquery.min.js"></script>
     <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
     <script src="~/assets/js/lib/menubar/sidebar.js"></script>
-    <script src="~/assets/js/lib/preloader/pace.min.js"></script>
     <script src="~/assets/js/lib/bootstrap.min.js"></script>
     <script src="~/assets/js/scripts.js"></script>
+
 
     <script>
         // Seleccionar receta desde la lista lateral
