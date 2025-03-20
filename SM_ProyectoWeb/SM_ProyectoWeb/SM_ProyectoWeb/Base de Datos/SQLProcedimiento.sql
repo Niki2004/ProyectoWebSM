@@ -248,7 +248,7 @@ END;
 
 CREATE PROCEDURE [dbo].[ConsultarComentario]
     @Id_Comentario BIGINT,
-    @Id_Usuario BIGINT = NULL -- Nuevo parámetro opcional
+    @Id_Usuario BIGINT = NULL 
 AS
 BEGIN
 
@@ -262,4 +262,25 @@ BEGIN
     AND (C.Id_Usuario = @Id_Usuario OR @Id_Usuario IS NULL)
     ORDER BY C.Fecha_Comentario DESC
 
+END
+
+
+------------------------Consultar Recetas ----------------------
+CREATE PROCEDURE [dbo].[ConsultarRecetas]
+AS
+BEGIN
+    SELECT 
+        R.Id_Receta,
+        R.Id_Categoria,
+        C.Nombre AS Nombre_Categoria, 
+        R.Titulo,
+        R.Descripcion,
+        R.Fecha_Publicacion,
+        R.PlatoReciente,
+        R.PlatoDestacada,
+        R.Ingrediente,
+        R.Imagen
+    FROM Receta R
+    INNER JOIN Categoria C ON R.Id_Categoria = C.Id_Categoria
+    ORDER BY R.Fecha_Publicacion DESC
 END
