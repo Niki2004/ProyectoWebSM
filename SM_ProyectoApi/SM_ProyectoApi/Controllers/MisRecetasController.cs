@@ -239,7 +239,7 @@ namespace SM_ProyectoApi.Controllers
 
         [HttpGet]
         [Route("ConsultarRecetas")]
-        public IActionResult RecetasExistentes()
+        public IActionResult ConsultarRecetas()
         {
             using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
             {

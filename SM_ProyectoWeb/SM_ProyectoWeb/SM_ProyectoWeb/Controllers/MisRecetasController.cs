@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SM_ProyectoWeb.Dependencias;
 using SM_ProyectoWeb.Models;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace SM_ProyectoWeb.Controllers
 {
@@ -20,10 +21,7 @@ namespace SM_ProyectoWeb.Controllers
             _utilitarios = utilitarios;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+      
 
         [HttpGet]
         public IActionResult RegistrarReceta()
@@ -100,6 +98,33 @@ namespace SM_ProyectoWeb.Controllers
 
             ViewBag.ListaRecetas = recetasSelect;
         }
+
+
+       public IActionResult ConsultarRecetas()
+{
+    using (var api = _httpClient.CreateClient())
+    {
+        var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetass";
+
+        api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+        var response = api.GetAsync(url).Result;
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+            if (result != null && result.Indicador)
+            {
+                var datosResult = JsonSerializer.Deserialize<List<RecetaModel>>((JsonElement)result.Datos!);
+                return View(datosResult);
+            }
+        }
+    }
+
+    return View(new List<RecetaModel>());
+}
+
+
 
     }
 }
