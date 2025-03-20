@@ -1,5 +1,5 @@
 ﻿@using SM_ProyectoWeb.Models
-@model ComentarioModel
+@model List<ComentarioModel>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -415,7 +415,7 @@
                             <li><a href="@Url.Action("Index","MisRecetas")">Recetas</a></li>
                             <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
                             <li><a href="@Url.Action("Favoritas","Recetas")">Marcadas como Favoritas</a></li>
-                            <li class="active"><a href="@Url.Action("RegistrarComentario","MisRecetas")">Comentarios</a></li>
+                            <li class="active"><a href="@Url.Action("ConsultarComentario","MisRecetas")">Comentarios</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -471,50 +471,59 @@
                 </div>
 
                 <div class="row">
-                    <!-- Columna principal - Formulario de comentario -->
+                    <!-- Columna principal - Comentarios -->
                     <div class="col-lg-8 col-md-12">
                         <!-- Tabs de navegación -->
                         <ul class="nav nav-tabs comment-tabs" id="commentTabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="add-comment-tab" data-toggle="tab" href="#add-comment" role="tab" aria-controls="add-comment" aria-selected="true">
-                                    <i class="ti-comment-alt mr-2"></i>Agregar Comentario
+                                <a class="nav-link active" id="my-comments-tab" data-toggle="tab" href="#my-comments" role="tab" aria-controls="my-comments" aria-selected="true">
+                                    <i class="ti-comment mr-2"></i>Mis Comentarios
                                 </a>
                             </li>
                         </ul>
 
-                        <div class="tab-content" id="commentTabsContent">
-                            <!-- Pestaña para agregar comentario -->
-                            <div class="tab-pane fade show active" id="add-comment" role="tabpanel" aria-labelledby="add-comment-tab">
-                                <form asp-action="RegistrarComentario" asp-controller="MisRecetas">
-                                    <div class="form-section">
-                                        <h4 class="form-title">
-                                            <span class="section-icon"><i class="ti-comment-alt"></i></span>
-                                            Nuevo Comentario
-                                        </h4>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="my-comments" role="tabpanel" aria-labelledby="my-comments-tab">
+                                <div class="form-section">
+                                    <h4 class="form-title">
+                                        <span class="section-icon"><i class="ti-comment"></i></span>
+                                        Comentarios Realizados
+                                    </h4>
 
-                                        <!-- Campo oculto para el ID del usuario -->
-                                        <input type="hidden" class="form-control input-lg" asp-for="Id_Usuario" placeholder="Id_Usuario" />
+                                    <div class="comment-list">
+                                        @foreach (var comentario in Model)
+                                        {
+                                            <!-- Comentario dinámico desde el modelo -->
+                                            <div class="comment-item">
+                                                <div class="comment-header">
+                                                    <div class="comment-author">@comentario.Titulo</div>
+                                                    <div class="comment-date">@comentario.Fecha_Comentario.ToString("dd/MM/yyyy")</div>
+                                                </div>
+                                                <div class="comment-body">
+                                                    <p>@comentario.Contenido</p>
+                                                </div>
+                                                <div class="comment-actions mt-2">
+                                                    <button class="btn btn-sm btn-outline-primary mr-2" onclick="editarComentario(@comentario.Id_Comentario)">
+                                                        <i class="ti-pencil"></i> Editar
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger mr-2" onclick="eliminarComentario(@comentario.Id_Comentario)">
+                                                        <i class="ti-trash"></i> Eliminar
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-success" onclick="agregarComentario(@comentario.Id_Comentario)">
+                                                        <i class="ti-plus"></i> Agregar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }
 
-                                        <div class="form-group">
-                                            <label for="Id_Receta" class="required-field">Seleccionar Receta</label>
-                                            <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
-                                        </div>
-
-                                        <div class="form-group mt-4">
-                                            <label for="Contenido" class="required-field">Tu Comentario</label>
-                                            <input type="text" class="form-control input-lg" asp-for="Contenido" placeholder="Contenido">
-                                            <small class="help-tip">Tu comentario ayudará a otros usuarios a decidir si preparar esta receta</small>
-                                        </div>
-
-                                        <input type="hidden" class="form-control input-lg" asp-for="Fecha_Comentario" placeholder="Fecha_Comentario" />
-
-                                        <div class="text-right mt-4">
-                                            <button type="submit" class="btn submit-btn">
-                                                <i class="ti-comment-alt mr-2"></i>Publicar Comentario
-                                            </button>
-                                        </div>
+                                        @if (!Model.Any())
+                                        {
+                                            <div class="alert alert-info">
+                                                No has realizado ningún comentario todavía. ¡Anímate a compartir tu opinión sobre las recetas!
+                                            </div>
+                                        }
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -611,6 +620,25 @@
             dateField.value = formattedDate;
             document.querySelector('form').appendChild(dateField);
         });
+
+            function editarComentario(idComentario) {
+            window.location.href = '/Comentarios/Editar/' + idComentario;
+        }
+
+        function eliminarComentario(idComentario) {
+            if (confirm('¿Estás seguro de que deseas eliminar este comentario?')) {
+                window.location.href = '/Comentarios/Eliminar/' + idComentario;
+            }
+        }
+
+                function agregarComentario(idComentario) {
+            window.location.href = '/MisRecetas/RegistrarComentario?idComentario=' + idComentario;
+        }
+
+        function selectRecipe(idReceta) {
+            window.location.href = '/Recetas/Detalle/' + idReceta;
+        }
     </script>
 </body>
 </html>
+

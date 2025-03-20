@@ -18,11 +18,11 @@ namespace SM_ProyectoWeb.Dependencias
             _accessor = accessor;
         }
 
-        public List<RecetaModel> ConsultarInfoRecetas(long Id_Receta)
+        public List<ComentarioModel> ConsultarInfoComentario(long Id_Comentario)
         {
             using (var api = _httpClient.CreateClient())
             {
-                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarComentario?Id=" + Id_Receta;
+                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarComentario?Id=" + Id_Comentario;
 
                 api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessor.HttpContext!.Session.GetString("Token"));
                 var response = api.GetAsync(url).Result;
@@ -33,12 +33,12 @@ namespace SM_ProyectoWeb.Dependencias
 
                     if (result != null && result.Indicador)
                     {
-                        return JsonSerializer.Deserialize<List<RecetaModel>>((JsonElement)result.Datos!)!;
+                        return JsonSerializer.Deserialize<List<ComentarioModel>>((JsonElement)result.Datos!)!;
                     }
                 }
             }
 
-            return new List<RecetaModel>();
+            return new List<ComentarioModel>();
         }
     }
 }

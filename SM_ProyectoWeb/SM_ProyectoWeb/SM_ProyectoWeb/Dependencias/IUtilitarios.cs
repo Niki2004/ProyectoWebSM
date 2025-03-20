@@ -4,7 +4,7 @@ namespace SM_ProyectoWeb.Dependencias
 {
     public interface IUtilitarios
     {
-        List<RecetaModel> ConsultarInfoRecetas(long Id_Receta);
+        List<ComentarioModel> ConsultarInfoComentario(long Id_Comentario);
 
     }
 }

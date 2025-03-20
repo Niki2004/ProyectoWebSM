@@ -25,6 +25,12 @@ namespace SM_ProyectoWeb.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult RegistrarReceta()
+        {
+            return View();
+        }
+
         [HttpPost]
         public IActionResult RegistrarReceta(RecetaModel model)
         {
@@ -37,7 +43,7 @@ namespace SM_ProyectoWeb.Controllers
 
                 if (result.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Recetas", "MisRecetas");
+                    return RedirectToAction("RegistrarReceta", "MisRecetas");
                 }
             }
 
@@ -45,12 +51,13 @@ namespace SM_ProyectoWeb.Controllers
         }
 
 
-        //[HttpGet]
-        //public IActionResult ConsultarComentario()
-        //{
-        //    var datosResult = _utilitarios.ConsultarInfoRecetas(0);
-        //    return View(datosResult);
-        //}
+        [HttpGet]
+        public IActionResult ConsultarComentario()
+        {
+            var datosResult = _utilitarios.ConsultarInfoComentario(0);
+            Console.WriteLine("Cantidad de comentarios: " + datosResult.Count);
+            return View(datosResult);
+        }
 
 
         [HttpGet]
@@ -82,7 +89,7 @@ namespace SM_ProyectoWeb.Controllers
 
         private void CargarComentariosCombo()
         {
-            var datosResult = _utilitarios.ConsultarInfoRecetas(0);
+            var datosResult = _utilitarios.ConsultarInfoComentario(0);
             var recetasSelect = new List<SelectListItem>();
 
             recetasSelect.Add(new SelectListItem { Value = string.Empty, Text = "-- Seleccione --" });
