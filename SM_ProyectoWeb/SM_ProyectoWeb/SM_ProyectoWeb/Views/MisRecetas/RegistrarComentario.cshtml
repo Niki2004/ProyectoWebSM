@@ -505,14 +505,21 @@
 
                                                 <div class="form-group">
                                                     <label for="Id_Receta" class="required-field">Seleccionar Receta</label>
-                                                    < <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
+                                                    <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
+                                                </div>
+
+                                                <div class="form-group col-md-12 mb-4">
+                                                    Recetas
+                                                    <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
                                                 </div>
 
                                                 <div class="form-group mt-4">
                                                     <label for="Contenido" class="required-field">Tu Comentario</label>
-                                                    <textarea class="form-control" id="Contenido" name="Contenido" required placeholder="Comparte tu experiencia con esta receta..."></textarea>
+                                                    <input type="text" class="form-control input-lg" asp-for="Contenido" placeholder="Contenido">
                                                     <small class="help-tip">Tu comentario ayudará a otros usuarios a decidir si preparar esta receta</small>
                                                 </div>
+
+                                                <input type="hidden" class="form-control input-lg" asp-for="Fecha_Comentario" placeholder="Fecha_Comentario" />
 
                                                 <div class="text-right mt-4">
                                                     <button type="submit" class="btn submit-btn">

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SM_ProyectoWeb.Dependencias;
 using SM_ProyectoWeb.Models;
 using System.Net.Http.Headers;
 
@@ -9,11 +11,13 @@ namespace SM_ProyectoWeb.Controllers
 
         private readonly IHttpClientFactory _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly IUtilitarios _utilitarios;
 
-        public MisRecetasController(IHttpClientFactory httpClient, IConfiguration configuration)
+        public MisRecetasController(IHttpClientFactory httpClient, IConfiguration configuration, IUtilitarios utilitarios)
         {
             _httpClient = httpClient;
             _configuration = configuration;
+            _utilitarios = utilitarios;
         }
 
 
@@ -25,7 +29,9 @@ namespace SM_ProyectoWeb.Controllers
         [HttpGet]
         public IActionResult RegistrarReceta()
         {
-            return View();
+            var datosResult = _utilitarios.ConsultarInfoRecetas(0);
+            CargarComentariosCombo();
+            return View(datosResult);
         }
 
 
@@ -73,6 +79,20 @@ namespace SM_ProyectoWeb.Controllers
             }
 
             return View();
+        }
+
+        private void CargarComentariosCombo()
+        {
+            var datosResult = _utilitarios.ConsultarInfoRecetas(0);
+            var recetasSelect = new List<SelectListItem>();
+
+            recetasSelect.Add(new SelectListItem { Value = string.Empty, Text = "-- Seleccione --" });
+            foreach (var item in datosResult)
+            {
+                recetasSelect.Add(new SelectListItem { Value = item.Id_Receta.ToString(), Text = item.Titulo });
+            }
+
+            ViewBag.ListaRecetas = recetasSelect;
         }
 
     }

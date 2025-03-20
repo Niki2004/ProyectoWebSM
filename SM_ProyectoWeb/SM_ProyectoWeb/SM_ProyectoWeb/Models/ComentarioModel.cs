@@ -10,6 +10,8 @@
 
         public string? Contenido { get; set; }
 
+        public string? Titulo { get; set; }
+
         public DateTime Fecha_Comentario { get; set; }
       
     }
