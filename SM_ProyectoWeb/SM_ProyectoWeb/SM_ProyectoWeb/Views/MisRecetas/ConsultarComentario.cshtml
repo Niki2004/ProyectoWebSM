@@ -480,6 +480,11 @@
                                     <i class="ti-comment mr-2"></i>Mis Comentarios
                                 </a>
                             </li>
+                            <li class="nav-item ml-2">
+                                <a class="nav-link active" id="add-comment-tab" href="@Url.Action("RegistrarComentario","MisRecetas")">
+                                    <i class="ti-comment-alt mr-2"></i>Agregar Comentario
+                                </a>
+                            </li>
                         </ul>
 
                         <div class="tab-content">
@@ -508,9 +513,6 @@
                                                     </button>
                                                     <button class="btn btn-sm btn-outline-danger mr-2" onclick="eliminarComentario(@comentario.Id_Comentario)">
                                                         <i class="ti-trash"></i> Eliminar
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-success" onclick="agregarComentario(@comentario.Id_Comentario)">
-                                                        <i class="ti-plus"></i> Agregar
                                                     </button>
                                                 </div>
                                             </div>

@@ -76,7 +76,7 @@ namespace SM_ProyectoWeb.Controllers
 
                 if (result.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("RegistrarComentario", "MisRecetas");
+                    return RedirectToAction("ConsultarComentario", "MisRecetas");
                 }
             }
 
