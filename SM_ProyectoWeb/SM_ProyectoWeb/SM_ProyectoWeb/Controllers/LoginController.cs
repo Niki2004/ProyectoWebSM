@@ -41,6 +41,8 @@ namespace SM_ProyectoWeb.Controllers
                     {
                         var datosResult = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Datos!);
 
+                        HttpContext!.Session.SetString("Token", datosResult!.Token!);
+
                         return RedirectToAction("Principal", "Login");
                     }
 
