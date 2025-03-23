@@ -168,6 +168,32 @@
                 max-height: 400px;
                 object-fit: cover;
             }
+
+        .recipe-ingredients {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .recipe-ingredients {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 15px;
+        }
+
+        .ingredient-item {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 5px;
+        }
+
+            .ingredient-item::before {
+                content: "•"; 
+                position: absolute;
+                left: 5px;
+                color: #000000;
+                font-weight: bold;
+            }
     </style>
 </head>
 <body>
@@ -211,11 +237,41 @@
                         <ul>
                             <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
                             <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
-                            <li><a href="@Url.Action("Favoritas","Recetas")">Marcadas como Favoritas</a></li>
                             <li><a href="@Url.Action("ConsultarComentario","MisRecetas")">Comentarios</a></li>
                         </ul>
                     </li>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <ul>
+                            <li class="header-icon dib">
+                                <span class="user-avatar">John <i class="ti-angle-down f-s-10"></i></span>
+                                <div class="drop-down dropdown-profile">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -246,10 +302,12 @@
                     </div>
                     <div class="col-lg-6">
                         <h3>Pancakes de Frutos Rojos con Canela</h3>
-                        <p class="text-muted"><span class="recipe-category">Desayuno</span> • 25 minutos • Fácil</p>
+                        <p class="text-muted"><span class="recipe-category">Desayuno</span> • sábado, 08 marzo 2025 • Fácil</p>
                         <p>Deliciosos pancakes esponjosos acompañados de una mezcla de frutos rojos frescos y un toque de canela. El desayuno perfecto para comenzar el día con energía y buen sabor.</p>
-                        <p><strong>Ingredientes principales:</strong> Harina, huevos, fresas, arándanos, frambuesas, canela, miel</p>
-                       
+                        <p><strong>Ingredientes:</strong></p>
+                        <p>• Harina</p>
+                        <p>• Huevos</p>
+                        <p>• Fresas</p>      
                     </div>
                 </div>
 
@@ -269,10 +327,21 @@
 
                                 <div class="recipe-content">
                                     <h4 class="recipe-title">@receta.Titulo</h4>
+                                    <div class="ingredients-section">
+                                        
+                                    Ingredientes:
+                                        <ul class="recipe-ingredients">
+                                            @foreach (var ingrediente in receta.Ingrediente.Split(','))
+                                            {
+                                                <li class="ingredient-item">@ingrediente.Trim()</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                   Preparación:
                                     <p class="recipe-description">@receta.Descripcion</p>
                                     <div class="recipe-meta">
                                         <span class="recipe-category">@receta.Nombre_Categoria</span>
-                                        <span>@receta.Fecha_Publicacion min</span>
+                                        <span>@receta.Fecha_Publicacion.ToString("dddd, dd MMMM yyyy")</span>
                                     </div>
 
                                 </div>
