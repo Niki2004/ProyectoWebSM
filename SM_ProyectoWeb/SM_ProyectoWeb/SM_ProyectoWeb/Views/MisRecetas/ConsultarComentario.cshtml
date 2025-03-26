@@ -506,9 +506,11 @@
                                                     <p>@comentario.Contenido</p>
                                                 </div>
                                                 <div class="comment-actions mt-2">
-                                                    <button class="btn btn-sm btn-outline-primary mr-2" onclick="editarComentario(@comentario.Id_Comentario)">
+                                                    <a asp-action="ModificarComentario"
+                                                       asp-route-id="@comentario.Id_Comentario"
+                                                       class="btn btn-sm btn-outline-primary mr-2">
                                                         <i class="ti-pencil"></i> Editar
-                                                    </button>
+                                                    </a>
                                                     <button class="btn btn-sm btn-outline-danger mr-2" onclick="eliminarComentario(@comentario.Id_Comentario)">
                                                         <i class="ti-trash"></i> Eliminar
                                                     </button>

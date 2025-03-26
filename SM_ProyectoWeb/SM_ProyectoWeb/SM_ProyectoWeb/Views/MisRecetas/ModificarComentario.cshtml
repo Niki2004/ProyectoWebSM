@@ -1,0 +1,402 @@
+@using SM_ProyectoWeb.Models
+@model ComentarioModel
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recetas de la Felicidad - Modificar Comentario</title>
+    <link rel="stylesheet" href="~/assets/css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
+    <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <style>
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .btn-primary {
+            background: #4e73df;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #375ad3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #555;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e6ea;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('~/img/food-hero.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+        .hero-section h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        .section-icon {
+            background: #f1f5ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #4e73df;
+        }
+
+        .help-tip {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .recipe-select {
+            height: 46px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+                <ul>
+                    <li class="label">MENÚ PRINCIPAL</li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                        <ul>
+                            <li><a href="@Url.Action("DesayunosDestacados","Categorias")">Los más Destacadas</a></li>
+                            <li><a href="@Url.Action("DesayunosRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Entradas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("EntradasDestacados","Categorias")">Las más Destacadas</a></li>
+                            <li><a href="@Url.Action("EntradasRecientes","Categorias")">Añadidas Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Platos Fuertes <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PlatosFuertesDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PlatosFuertesRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PostresRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="active">
+                        <a class="sidebar-sub-toggle">Mis Recetas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
+                            <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
+                            <li class="active"><a href="@Url.Action("RegistrarComentario","MisRecetas")">Comentarios</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <ul>
+                            <li class="header-icon dib">
+                                <span class="user-avatar">Usuario<i class="ti-angle-down f-s-10"></i></span>
+                                <div class="drop-down dropdown-profile">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1>Modifica tu Comentario</h1>
+                    <p>Actualiza tu opinión sobre las recetas de nuestra comunidad</p>
+                </div>
+
+                <div class="row page-title">
+                    <div class="col-md-12">
+                        <h2>Editar Comentario</h2>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Columna principal - Formulario de comentario -->
+                    <div class="col-lg-8 col-md-12">
+                        @if (TempData["Mensaje"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                @TempData["Mensaje"]
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                @TempData["Error"]
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+
+                        <form asp-action="ModificarComentario" asp-route-id="@Model.Id_Comentario" method="post" id="comentarioForm">
+                            <div class="form-section">
+                                <h4 class="form-title">
+                                    <span class="section-icon"><i class="ti-pencil"></i></span>
+                                    Modificar Comentario
+                                </h4>
+                                <input type="hidden" asp-for="Id_Comentario" />
+                                <input type="hidden" asp-for="Id_Usuario" />
+                                <input type="hidden" asp-for="Fecha_Comentario" />
+
+                                <div class="form-group">
+                                    <label for="Id_Receta" class="required-field">Seleccionar Receta</label>
+                                    <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
+                                    <span asp-validation-for="Id_Receta" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group mt-4">
+                                    <label for="Contenido" class="required-field">Tu Comentario</label>
+                                    <textarea class="form-control input-lg" asp-for="Contenido" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
+                                    <span asp-validation-for="Contenido" class="text-danger"></span>
+                                    <small class="help-tip">Tu comentario ayudará a otros usuarios a decidir si preparar esta receta</small>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <a href="@Url.Action("ConsultarComentario", "MisRecetas")" class="btn btn-secondary">Cancelar</a>
+                        </form>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <!-- Nueva sección de Estadísticas del Comentario -->
+                        <div class="form-section mb-4">
+                            <h4 class="form-title">
+                                <i class="ti-stats-up"></i> Estadísticas del Comentario
+                            </h4>
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                    <h5 class="text-primary">
+                                        <i class="ti-calendar mr-2"></i>
+                                        @Model.Fecha_Comentario.ToString("dd/MM/yyyy")
+                                    </h5>
+                                    <small class="text-muted">Fecha de Publicación</small>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <h5 class="text-success">
+                                        <i class="ti-comment mr-2"></i>
+                                        @(ViewBag.CantidadComentarios ?? 0)
+                                    </h5>
+                                    <small class="text-muted">Total Comentarios</small>
+                                </div>
+                            </div>
+                            <hr class="my-3">
+                            <div class="text-center">
+                                <p class="mb-2">
+                                    <strong>Estado:</strong>
+                                    <span class="badge badge-primary">
+                                        @(ViewBag.EstadoComentario ?? "Activo")
+                                    </span>
+                                </p>
+                                <small class="text-muted">
+                                    <i class="ti-info-alt mr-1"></i>
+                                    Última modificación: @(ViewBag.UltimaModificacion ?? Model.Fecha_Comentario.ToString("dd/MM/yyyy HH:mm"))
+                                </small>
+                            </div>
+
+                     </div>
+
+                        <div class="form-section">
+                            <h4 class="form-title">
+                                <i class="ti-help-alt mr-2"></i> Consejos para comentar
+                            </h4>
+                            <div class="list-group">
+                                <div class="list-group-item list-group-item-action border-0 d-flex align-items-center py-2">
+                                    <span class="badge badge-soft-success mr-3" style="color: green;"><i class="ti-check"></i></span>
+                                    <span>Sé específico sobre lo que te gustó o no te gustó</span>
+                                </div>
+                                <div class="list-group-item list-group-item-action border-0 d-flex align-items-center py-2">
+                                    <span class="badge badge-soft-info mr-3" style="color: green;"><i class="ti-check"></i></span>
+                                    <span>Menciona si hiciste alguna modificación a la receta</span>
+                                </div>
+                                <div class="list-group-item list-group-item-action border-0 d-flex align-items-center py-2">
+                                    <span class="badge badge-soft-primary mr-3" style="color: green;"><i class="ti-check"></i></span>
+                                    <span>Comparte tips que puedan ayudar a otros</span>
+                                </div>
+                                <div class="list-group-item list-group-item-action border-0 d-flex align-items-center py-2">
+                                    <span class="badge badge-soft-warning mr-3" style="color: green;"><i class="ti-check"></i></span>
+                                    <span>Mantén un tono constructivo y respetuoso</span>
+                                </div>
+                                <div class="list-group-item list-group-item-action border-0 d-flex align-items-center py-2">
+                                    <span class="badge badge-soft-danger mr-3" style="color: green;"><i class="ti-check"></i></span>
+                                    <span>Indica el nivel de dificultad que encontraste</span>
+                                </div>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <small class="text-muted">
+                                    <i class="ti-info-alt mr-1"></i>
+                                    Tus comentarios ayudan a nuestra comunidad a crecer
+                                </small>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <script src="~/assets/js/lib/menubar/sidebar.js"></script>
+    <script src="~/assets/js/lib/bootstrap.min.js"></script>
+    <script src="~/assets/js/scripts.js"></script>
+
+    <script>
+        // Verificar que el formulario existe y agregar el evento submit
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('comentarioForm');
+            if (form) {
+                console.log('Formulario encontrado, agregando evento submit');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevenir el envío por defecto
+                    console.log('Formulario enviado');
+                    
+                    var receta = document.getElementById('Id_Receta').value;
+                    var contenido = document.getElementById('Contenido').value;
+                    var idUsuario = document.querySelector('input[name="Id_Usuario"]').value;
+
+                    console.log('Id_Receta:', receta);
+                    console.log('Contenido:', contenido);
+                    console.log('Id_Usuario:', idUsuario);
+
+                    if (!receta) {
+                        alert('Por favor, seleccione una receta');
+                        return false;
+                    }
+
+                    if (!contenido.trim()) {
+                        alert('Por favor, escriba un comentario');
+                        return false;
+                    }
+
+                    if (!idUsuario) {
+                        alert('Error: No se encontró el ID del usuario. Por favor, inicie sesión nuevamente.');
+                        return false;
+                    }
+
+                    // Si todo está bien, enviar el formulario
+                    console.log('Formulario válido, procediendo con el envío');
+                    form.submit();
+                });
+            } else {
+                console.error('Formulario no encontrado');
+            }
+        });
+    </script>
+</body>
+</html> 

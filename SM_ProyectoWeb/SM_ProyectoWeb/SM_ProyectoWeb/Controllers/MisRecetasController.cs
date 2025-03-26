@@ -211,7 +211,127 @@ namespace SM_ProyectoWeb.Controllers
         return View(new List<RecetaModel>());
     }
 
+        [HttpGet]
+        public IActionResult ModificarComentario(long id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
 
+                // Obtener el comentario por ID
+                var comentario = _utilitarios.ConsultarInfoComentario(id).FirstOrDefault();
+                if (comentario == null)
+                {
+                    TempData["Error"] = "No se encontró el comentario.";
+                    return RedirectToAction("ConsultarComentario", "MisRecetas");
+                }
+
+                // Verificar que el usuario actual sea el propietario del comentario
+                var idUsuarioActual = HttpContext.Session.GetString("Id_Usuario");
+                if (comentario.Id_Usuario.ToString() != idUsuarioActual)
+                {
+                    TempData["Error"] = "No tiene permisos para editar este comentario.";
+                    return RedirectToAction("ConsultarComentario", "MisRecetas");
+                }
+
+                CargarRecetasCombo();
+                return View(comentario);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cargar el comentario: {ex.Message}");
+                TempData["Error"] = "Ocurrió un error al cargar el comentario.";
+                return RedirectToAction("ConsultarComentario", "MisRecetas");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ModificarComentario(long id, ComentarioModel model)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    TempData["Error"] = "No hay sesión activa. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Obtener el ID del usuario de la sesión
+                var idUsuarioStr = HttpContext.Session.GetString("Id_Usuario");
+                if (string.IsNullOrEmpty(idUsuarioStr))
+                {
+                    TempData["Error"] = "No se encontró el ID del usuario en la sesión. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Validar que el ID del usuario sea un número válido
+                if (!int.TryParse(idUsuarioStr, out int idUsuario))
+                {
+                    TempData["Error"] = "El ID del usuario no es válido. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Asignar el ID del usuario al modelo
+                model.Id_Usuario = idUsuario;
+
+                if (!ModelState.IsValid)
+                {
+                    foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        TempData["Error"] = modelError.ErrorMessage;
+                    }
+                    CargarRecetasCombo();
+                    return View(model);
+                }
+
+                Console.WriteLine($"Intentando modificar comentario - Id: {id}, Id_Usuario: {model.Id_Usuario}, Id_Receta: {model.Id_Receta}");
+                Console.WriteLine($"Contenido: {model.Contenido}");
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + $"MisRecetas/ModificarComentario/{id}";
+                    Console.WriteLine($"URL del API: {url}");
+
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var result = api.PutAsJsonAsync(url, model).Result;
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}");
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (response != null && response.Indicador)
+                        {
+                            TempData["Mensaje"] = "Comentario modificado exitosamente";
+                            return RedirectToAction("ConsultarComentario", "MisRecetas");
+                        }
+                        else
+                        {
+                            TempData["Error"] = response?.Mensaje ?? "Error al modificar el comentario";
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error del API: {responseContent}");
+                        TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al modificar comentario: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
+            }
+
+            CargarRecetasCombo();
+            return View(model);
+        }
 
     }
 }
