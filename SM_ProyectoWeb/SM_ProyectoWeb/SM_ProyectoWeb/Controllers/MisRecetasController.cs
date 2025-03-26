@@ -30,20 +30,143 @@ namespace SM_ProyectoWeb.Controllers
         [HttpPost]
         public IActionResult RegistrarReceta(RecetaModel model)
         {
-            using (var api = _httpClient.CreateClient())
+            try
             {
-                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarReceta";
-
-                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                var result = api.PostAsJsonAsync(url, model).Result;
-
-                if (result.IsSuccessStatusCode)
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
-                    return RedirectToAction("RegistrarReceta", "MisRecetas");
+                    TempData["Error"] = "No hay sesión activa. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                Console.WriteLine("=== INICIO REGISTRO DE RECETA ===");
+                Console.WriteLine($"Token: {HttpContext.Session.GetString("Token")}");
+                Console.WriteLine($"Id_Categoria: {model.Id_Categoria}");
+                Console.WriteLine($"Titulo: {model.Titulo}");
+                Console.WriteLine($"Descripción: {model.Descripcion}");
+                Console.WriteLine($"Plato Reciente: {model.PlatoReciente}");
+                Console.WriteLine($"Plato Destacado: {model.PlatoDestacada}");
+                Console.WriteLine($"Ingredientes: {model.Ingrediente}");
+
+                // Validaciones adicionales
+                if (model.Id_Categoria <= 0)
+                {
+                    TempData["Error"] = "Debe seleccionar una categoría válida";
+                    return View(model);
+                }
+
+                if (string.IsNullOrEmpty(model.Titulo))
+                {
+                    TempData["Error"] = "El título es obligatorio";
+                    return View(model);
+                }
+
+                if (string.IsNullOrEmpty(model.Descripcion))
+                {
+                    TempData["Error"] = "La descripción es obligatoria";
+                    return View(model);
+                }
+
+                if (string.IsNullOrEmpty(model.Ingrediente))
+                {
+                    TempData["Error"] = "Debe agregar al menos un ingrediente";
+                    return View(model);
+                }
+
+                // Procesar la imagen si existe
+                if (Request.Form.Files.Count > 0)
+                {
+                    var file = Request.Form.Files[0];
+                    if (file != null && file.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            file.CopyTo(ms);
+                            model.Imagen = Convert.ToBase64String(ms.ToArray());
+                            Console.WriteLine($"Imagen procesada: {model.Imagen.Length} bytes");
+                        }
+                    }
+                    else
+                    {
+                        TempData["Error"] = "La imagen es obligatoria";
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    TempData["Error"] = "La imagen es obligatoria";
+                    return View(model);
+                }
+
+                // Obtener los ingredientes del formulario
+                var ingredientes = Request.Form["Ingrediente"].ToList();
+                model.Ingrediente = string.Join(", ", ingredientes.Where(i => !string.IsNullOrEmpty(i)));
+                Console.WriteLine($"Ingredientes procesados: {model.Ingrediente}");
+
+                // Procesar los valores de los checkboxes
+                model.PlatoReciente = Request.Form.ContainsKey("PlatoReciente");
+                model.PlatoDestacada = Request.Form.ContainsKey("PlatoDestacada");
+                Console.WriteLine($"Checkboxes - PlatoReciente: {model.PlatoReciente}, PlatoDestacada: {model.PlatoDestacada}");
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarReceta";
+                    Console.WriteLine($"URL del API: {url}");
+
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    
+                    // Crear un objeto anónimo con los datos necesarios
+                    var recetaData = new
+                    {
+                        model.Id_Categoria,
+                        model.Titulo,
+                        model.Descripcion,
+                        model.PlatoReciente,
+                        model.PlatoDestacada,
+                        model.Ingrediente,
+                        model.Imagen
+                    };
+
+                    // Serializar los datos para verificar
+                    var jsonData = JsonSerializer.Serialize(recetaData);
+                    Console.WriteLine($"Datos a enviar al API: {jsonData}");
+
+                    Console.WriteLine("Enviando datos al API...");
+                    var result = api.PostAsJsonAsync(url, recetaData).Result;
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}");
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (response != null && response.Indicador)
+                        {
+                            Console.WriteLine("Receta registrada exitosamente");
+                            TempData["Mensaje"] = "Receta registrada exitosamente";
+                            return RedirectToAction("ConsultarRecetas", "MisRecetas");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Error en la respuesta: {response?.Mensaje}");
+                            TempData["Error"] = response?.Mensaje ?? "Error al registrar la receta";
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error del API: {responseContent}");
+                        TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al registrar receta: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
+            }
 
-            return View();
+            return View(model);
         }
 
 
@@ -188,28 +311,72 @@ namespace SM_ProyectoWeb.Controllers
 
        public IActionResult ConsultarRecetas(RecetaModel model)
         {
-            using (var api = _httpClient.CreateClient())
-         {
-
-                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetas";
-
-                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                var response = api.GetAsync(url).Result;
-
-                if (response.IsSuccessStatusCode)
-        {
-            var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
-
-            if (result != null && result.Indicador)
+            try
             {
-                var datosResult = JsonSerializer.Deserialize<List<RecetaModel>>((JsonElement)result.Datos!);
-                return View(datosResult);
-            }
-        }
-          }
+                Console.WriteLine("=== INICIO CONSULTA DE RECETAS ===");
+                Console.WriteLine($"Token: {HttpContext.Session.GetString("Token")}");
 
-        return View(new List<RecetaModel>());
-    }
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetas";
+                    Console.WriteLine($"URL del API: {url}");
+
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var response = api.GetAsync(url).Result;
+
+                    Console.WriteLine($"Código de respuesta: {response.StatusCode}");
+                    var responseContent = response.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (result != null && result.Indicador)
+                        {
+                            if (result.Datos != null)
+                            {
+                                var datosResult = JsonSerializer.Deserialize<List<RecetaModel>>((JsonElement)result.Datos);
+                                Console.WriteLine($"Cantidad de recetas encontradas: {datosResult?.Count ?? 0}");
+                                
+                                if (datosResult != null)
+                                {
+                                    foreach (var receta in datosResult)
+                                    {
+                                        Console.WriteLine($"Receta encontrada - ID: {receta.Id_Receta}, Título: {receta.Titulo}");
+                                    }
+                                }
+                                
+                                return View(datosResult ?? new List<RecetaModel>());
+                            }
+                            else
+                            {
+                                Console.WriteLine("No hay datos en la respuesta");
+                                TempData["Mensaje"] = "No hay recetas registradas";
+                                return View(new List<RecetaModel>());
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Error en la respuesta: {result?.Mensaje}");
+                            TempData["Error"] = result?.Mensaje ?? "Error al consultar las recetas";
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error del API: {responseContent}");
+                        TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al consultar recetas: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
+            }
+
+            return View(new List<RecetaModel>());
+        }
 
         [HttpGet]
         public IActionResult ModificarComentario(long id)

@@ -435,7 +435,8 @@
 
                         <div class="row">
                             <div class="col-lg-8 col-md-12">
-                                <form method="post" action="@Url.Action("GuardarReceta","MisRecetas")" enctype="multipart/form-data">
+                                <form method="post" action="@Url.Action("RegistrarReceta","MisRecetas")" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
                                     <div class="form-section">
                                         <h4 class="form-title">
                                             <span class="section-icon"><i class="ti-info-alt"></i></span>
@@ -467,14 +468,16 @@
 
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="PlatoReciente" name="PlatoReciente">
+                                                <input type="checkbox" class="custom-control-input" id="PlatoReciente" name="PlatoReciente" value="true">
+                                                <input type="hidden" name="PlatoReciente" value="false">
                                                 <label class="custom-control-label" for="PlatoReciente">Marcar como plato reciente</label>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="PlatoDestacada" name="PlatoDestacada">
+                                                <input type="checkbox" class="custom-control-input" id="PlatoDestacada" name="PlatoDestacada" value="true">
+                                                <input type="hidden" name="PlatoDestacada" value="false">
                                                 <label class="custom-control-label" for="PlatoDestacada">Marcar como plato destacado</label>
                                             </div>
                                         </div>
@@ -630,66 +633,129 @@
                                         </div>
                                     </div>
                                 </div>
-                                        </div>
-                            <script src="~/assets/js/lib/jquery.min.js"></script>
-                            <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
-                            <script src="~/assets/js/lib/menubar/sidebar.js"></script>
-                            <script src="~/assets/js/lib/bootstrap.min.js"></script>
-                            <script src="~/assets/js/scripts.js"></script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <script src="~/assets/js/lib/menubar/sidebar.js"></script>
+    <script src="~/assets/js/lib/bootstrap.min.js"></script>
+    <script src="~/assets/js/scripts.js"></script>
 
+    <script>
+        // Agregar más campos de ingredientes
+        document.getElementById('add-ingredient').addEventListener('click', function() {
+            const container = document.getElementById('ingredientes-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'ingredient-row';
+            newRow.innerHTML = `
+                <input type="text" class="form-control" name="Ingrediente" placeholder="Ej: 2 tazas de harina">
+                <span class="remove-ingredient ml-2"><i class="ti-trash"></i></span>
+            `;
+            container.appendChild(newRow);
 
-                                        <script>
-                                            // Agregar más campos de ingredientes
-                                            document.getElementById('add-ingredient').addEventListener('click', function() {
-                                                const container = document.getElementById('ingredientes-container');
-                                                const newRow = document.createElement('div');
-                                                newRow.className = 'ingredient-row';
-                                                newRow.innerHTML = `
-                                                    <input type="text" class="form-control" name="Ingrediente" placeholder="Ej: 2 tazas de harina">
-                                                    <span class="remove-ingredient ml-2"><i class="ti-trash"></i></span>
-                                                `;
-                                                container.appendChild(newRow);
+            // Agregar evento para eliminar ingrediente
+            newRow.querySelector('.remove-ingredient').addEventListener('click', function() {
+                container.removeChild(newRow);
+            });
+        });
 
-                                                // Agregar evento para eliminar ingrediente
-                                                newRow.querySelector('.remove-ingredient').addEventListener('click', function() {
-                                                    container.removeChild(newRow);
-                                                });
-                                            });
+        // Vista previa de la imagen
+        document.getElementById('Imagen').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            const img = preview.querySelector('img');
+            const file = e.target.files[0];
 
-                                            // Vista previa de la imagen
-                                            document.getElementById('Imagen').addEventListener('change', function(e) {
-                                                const preview = document.getElementById('imagePreview');
-                                                const img = preview.querySelector('img');
-                                                const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
 
-                                                if (file) {
-                                                    const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    preview.classList.add('has-image');
+                }
 
-                                                    reader.onload = function(e) {
-                                                        img.src = e.target.result;
-                                                        preview.classList.add('has-image');
-                                                    }
+                reader.readAsDataURL(file);
+            } else {
+                img.src = '';
+                preview.classList.remove('has-image');
+            }
+        });
 
-                                                    reader.readAsDataURL(file);
-                                                } else {
-                                                    img.src = '';
-                                                    preview.classList.remove('has-image');
-                                                }
-                                            });
+        // Validación del formulario
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevenir el envío por defecto
 
-                                            // Agregar la fecha actual al campo oculto de fecha_publicacion
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                const now = new Date();
-                                                const formattedDate = now.toISOString().slice(0, 16);
-                                                const dateField = document.createElement('input');
-                                                dateField.type = 'hidden';
-                                                dateField.name = 'Fecha_Publicacion';
-                                                dateField.value = formattedDate;
-                                                document.querySelector('form').appendChild(dateField);
-                                            });
-                                        </script>
+            const titulo = document.getElementById('Titulo').value;
+            const categoria = document.getElementById('Id_Categoria').value;
+            const descripcion = document.getElementById('Descripcion').value;
+            const ingredientes = document.querySelectorAll('input[name="Ingrediente"]');
+            const imagen = document.getElementById('Imagen').files[0];
+            const platoReciente = document.getElementById('PlatoReciente').checked;
+            const platoDestacada = document.getElementById('PlatoDestacada').checked;
 
+            console.log('=== Validación del formulario ===');
+            console.log('Título:', titulo);
+            console.log('Categoría:', categoria);
+            console.log('Descripción:', descripcion);
+            console.log('Plato Reciente:', platoReciente);
+            console.log('Plato Destacado:', platoDestacada);
+            console.log('Ingredientes:', Array.from(ingredientes).map(i => i.value));
+            console.log('Imagen:', imagen ? imagen.name : 'No seleccionada');
+
+            if (!titulo || !categoria || !descripcion || !ingredientes[0].value || !imagen) {
+                alert('Por favor, complete todos los campos requeridos');
+                return;
+            }
+
+            // Validar que al menos un ingrediente tenga valor
+            let tieneIngredientes = false;
+            ingredientes.forEach(ing => {
+                if (ing.value.trim() !== '') {
+                    tieneIngredientes = true;
+                }
+            });
+
+            if (!tieneIngredientes) {
+                alert('Por favor, agregue al menos un ingrediente');
+                return;
+            }
+
+            // Crear un FormData para enviar el formulario
+            const formData = new FormData(this);
+
+            // Asegurarse de que los checkboxes se envíen correctamente
+            formData.set('PlatoReciente', platoReciente);
+            formData.set('PlatoDestacada', platoDestacada);
+
+            // Enviar el formulario usando fetch
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Estado de la respuesta:', response.status);
+                return response.text().then(text => {
+                    console.log('Contenido de la respuesta:', text);
+                    return { status: response.status, text };
+                });
+            })
+            .then(({ status, text }) => {
+                if (status === 200) {
+                    window.location.href = '@Url.Action("ConsultarRecetas", "MisRecetas")';
+                } else {
+                    throw new Error('Error al guardar la receta: ' + text);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al guardar la receta. Por favor, intente nuevamente.');
+            });
+        });
+    </script>
 </body>
-
 </html>

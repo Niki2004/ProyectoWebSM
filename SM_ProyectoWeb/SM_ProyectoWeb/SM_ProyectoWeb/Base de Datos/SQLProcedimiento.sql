@@ -143,7 +143,7 @@ CREATE PROCEDURE RegistrarReceta
     @PlatoReciente BIT,
     @PlatoDestacada BIT,
     @Ingrediente NVARCHAR(255),
-	@Imagen NVARCHAR(255)
+    @Imagen NVARCHAR(255)
 AS
 BEGIN
     INSERT INTO [dbo].[Receta] (
