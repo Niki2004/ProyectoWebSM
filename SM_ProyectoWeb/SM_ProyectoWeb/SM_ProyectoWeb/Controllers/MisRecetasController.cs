@@ -333,5 +333,73 @@ namespace SM_ProyectoWeb.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public IActionResult EliminarComentario(long id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    TempData["Error"] = "No hay sesión activa. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Obtener el comentario por ID para verificar el propietario
+                var comentario = _utilitarios.ConsultarInfoComentario(id).FirstOrDefault();
+                if (comentario == null)
+                {
+                    TempData["Error"] = "No se encontró el comentario.";
+                    return RedirectToAction("ConsultarComentario", "MisRecetas");
+                }
+
+                // Verificar que el usuario actual sea el propietario del comentario
+                var idUsuarioActual = HttpContext.Session.GetString("Id_Usuario");
+                if (comentario.Id_Usuario.ToString() != idUsuarioActual)
+                {
+                    TempData["Error"] = "No tiene permisos para eliminar este comentario.";
+                    return RedirectToAction("ConsultarComentario", "MisRecetas");
+                }
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/EliminarComentario";
+                    Console.WriteLine($"URL del API: {url}");
+
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var result = api.DeleteAsync($"{url}?idComentario={id}").Result;
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}");
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (response != null && response.Indicador)
+                        {
+                            TempData["Mensaje"] = "Comentario eliminado exitosamente";
+                        }
+                        else
+                        {
+                            TempData["Error"] = response?.Mensaje ?? "Error al eliminar el comentario";
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error del API: {responseContent}");
+                        TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar comentario: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
+            }
+
+            return RedirectToAction("ConsultarComentario", "MisRecetas");
+        }
+
     }
 }
