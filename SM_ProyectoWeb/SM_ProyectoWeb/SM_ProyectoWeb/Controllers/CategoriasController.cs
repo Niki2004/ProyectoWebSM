@@ -5,6 +5,8 @@ using System.Text.Json;
 
 namespace SM_ProyectoWeb.Controllers
 {
+    [FiltroSeguridadSesion]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class CategoriasController : Controller
     {
 

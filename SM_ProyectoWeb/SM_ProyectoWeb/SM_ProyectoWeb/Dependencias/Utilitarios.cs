@@ -11,6 +11,7 @@ namespace SM_ProyectoWeb.Dependencias
         private readonly IHttpClientFactory _httpClient;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _accessor;
+
         public Utilitarios(IHttpClientFactory httpClient, IConfiguration configuration, IHttpContextAccessor accessor)
         {
             _httpClient = httpClient;
@@ -40,5 +41,29 @@ namespace SM_ProyectoWeb.Dependencias
 
             return new List<ComentarioModel>();
         }
+
+        public List<PasoModel> ConsultarInfoPasos(long Id_Pasos)
+        {
+            using (var api = _httpClient.CreateClient())
+            {
+                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/MostrarPasos?Id=" + Id_Pasos;
+
+                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessor.HttpContext!.Session.GetString("Token"));
+                var response = api.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+                    if (result != null && result.Indicador)
+                    {
+                        return JsonSerializer.Deserialize<List<PasoModel>>((JsonElement)result.Datos!)!;
+                    }
+                }
+            }
+
+            return new List<PasoModel>();
+        }
+
     }
 }

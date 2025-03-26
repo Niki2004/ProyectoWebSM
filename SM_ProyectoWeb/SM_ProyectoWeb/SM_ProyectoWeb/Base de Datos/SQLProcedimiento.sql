@@ -1,6 +1,6 @@
 Use ProyectoWebAvanzada;
 
------------------------- RegistrarUsuario ----------------------
+------------------------ Registrar Usuario ----------------------
 
 CREATE PROCEDURE [dbo].[RegistrarUsuario]
     @Id_Estado bigint = 1,
@@ -18,7 +18,7 @@ BEGIN
 END
 GO
 
------------------------- IniciarSesion ----------------------
+------------------------ Iniciar Sesion ----------------------
 
 CREATE PROCEDURE [dbo].[IniciarSesion]
     @Email NVARCHAR(255),
@@ -38,7 +38,7 @@ BEGIN
 END
 GO
 
------------------------- DesayunosDestacados ----------------------
+------------------------ Desayunos Destacados ----------------------
 
 CREATE PROCEDURE DesayunosDestacados
 AS
@@ -50,7 +50,7 @@ BEGIN
 END;
 GO
 
------------------------- DesayunosRecientes ----------------------
+------------------------ Desayunos Recientes ----------------------
 
 CREATE PROCEDURE DesayunosRecientes
 AS
@@ -62,7 +62,7 @@ BEGIN
 END;
 GO
 
------------------------- EntradasDestacados ----------------------
+------------------------ Entradas Destacados ----------------------
 
 CREATE PROCEDURE EntradasDestacados
 AS
@@ -74,7 +74,7 @@ BEGIN
 END;
 GO
 
------------------------- EntradasRecientes ----------------------
+------------------------ Entradas Recientes ----------------------
 
 CREATE PROCEDURE EntradasRecientes
 AS
@@ -86,7 +86,7 @@ BEGIN
 END;
 GO
 
------------------------- PlatosFuertesDestacados ----------------------
+------------------------ Platos Fuertes Destacados ----------------------
 
 CREATE PROCEDURE PlatosFuertesDestacados
 AS
@@ -98,7 +98,7 @@ BEGIN
 END;
 GO
 
------------------------- PlatosFuertesRecientes ----------------------
+------------------------ Platos Fuertes Recientes ----------------------
 
 CREATE PROCEDURE PlatosFuertesRecientes
 AS
@@ -110,7 +110,7 @@ BEGIN
 END;
 GO
 
------------------------- PostresDestacados ----------------------
+------------------------ Postres Destacados ----------------------
 
 CREATE PROCEDURE PostresDestacados
 AS
@@ -122,7 +122,7 @@ BEGIN
 END;
 GO
 
------------------------- PostresRecientes ----------------------
+------------------------ Postres Recientes ----------------------
 
 CREATE PROCEDURE PostresRecientes
 AS
@@ -134,7 +134,7 @@ BEGIN
 END;
 GO
 
------------------------- RegistrarReceta ----------------------
+------------------------ Registrar Receta ----------------------
 
 CREATE PROCEDURE RegistrarReceta
     @Id_Categoria BIGINT,
@@ -157,7 +157,7 @@ BEGIN
 END;
 
 
------------------------- ModificarReceta ----------------------
+------------------------ Modificar Receta ----------------------
 
 CREATE PROCEDURE ModificarReceta
     @Id_Receta BIGINT,
@@ -184,7 +184,7 @@ BEGIN
 
 END;
 
------------------------- EliminarReceta ----------------------
+------------------------ Eliminar Receta ----------------------
 
 CREATE PROCEDURE EliminarReceta
     @Id_Receta BIGINT
@@ -197,7 +197,7 @@ END;
 
 
 
------------------------- RegistrarComentario ----------------------
+------------------------ Registrar Comentario ----------------------
 
 CREATE PROCEDURE RegistrarComentario
     @Id_Usuario BIGINT,
@@ -214,7 +214,7 @@ BEGIN
 END;
 
 
------------------------- ModificarComentario ----------------------
+------------------------ Modificar Comentario ----------------------
 
 CREATE PROCEDURE ModificarComentario
     @Id_Comentario BIGINT,
@@ -233,7 +233,7 @@ BEGIN
 END;
 
 
------------------------- EliminarComentario ----------------------
+------------------------ Eliminar Comentario ----------------------
 
 CREATE PROCEDURE EliminarComentario
     @Id_Comentario BIGINT
@@ -244,7 +244,7 @@ BEGIN
 END;
 
 
------------------------- ConsultarComentario ----------------------
+------------------------ Consultar Comentario ----------------------
 
 CREATE PROCEDURE [dbo].[ConsultarComentario]
     @Id_Comentario BIGINT,
@@ -265,7 +265,7 @@ BEGIN
 END
 
 
-------------------------Consultar Recetas ----------------------
+------------------------ Consultar Recetas ----------------------
 CREATE PROCEDURE [dbo].[ConsultarRecetas]
 AS
 BEGIN
@@ -284,3 +284,14 @@ BEGIN
     INNER JOIN Categoria C ON R.Id_Categoria = C.Id_Categoria
     ORDER BY R.Fecha_Publicacion DESC
 END
+
+------------------------ Registrar Errores ----------------------
+CREATE PROCEDURE RegistrarErrores
+    @Id_Usuario BIGINT,
+	@Descripcion VARCHAR(MAX),
+	@Origen VARCHAR(250)
+AS
+BEGIN
+   INSERT INTO [dbo].[Errores] (Id_Usuario, Descripcion, Origen, Fecha_Publicacion)
+   VALUES (@Id_Usuario, @Descripcion, @Origen, GETDATE());
+END;

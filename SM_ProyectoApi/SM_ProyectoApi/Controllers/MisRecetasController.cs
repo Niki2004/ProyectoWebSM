@@ -139,7 +139,6 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
-
         [HttpPut]
         [Route("ModificarComentario/{id}")]
         public IActionResult ModificarComentario(long id, ComentarioModel model)
@@ -230,8 +229,6 @@ namespace SM_ProyectoApi.Controllers
             }
 
         }
-
-        ///------------------------------------Mostrar todas las recetas que existen ------------------
 
         [HttpGet]
         [Route("ConsultarRecetas")]

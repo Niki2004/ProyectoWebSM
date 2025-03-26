@@ -8,7 +8,10 @@ CREATE TABLE Estado (
 
 CREATE TABLE Errores (
     Id_Errores bigint IDENTITY(1,1) PRIMARY KEY Not null,
-    Descripcion NVARCHAR(50) NOT NULL,
+	Id_Usuario bigint,
+    Descripcion NVARCHAR(MAX) NOT NULL,
+	Fecha_Publicacion DATETIME DEFAULT GETDATE() NOT NULL,
+	Origen NVARCHAR(250) NOT NULL
 );
 
 CREATE TABLE Roles (

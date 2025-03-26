@@ -6,6 +6,7 @@ using System.Text.Json;
 
 namespace SM_ProyectoWeb.Controllers
 {
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class LoginController : Controller
     {
         private readonly IHttpClientFactory _httpClient;
@@ -17,7 +18,6 @@ namespace SM_ProyectoWeb.Controllers
             _configuration = configuration;
         }
 
-        //Inicio de sesión  
         public IActionResult IniciarSesion()
         {
             return View();
@@ -70,7 +70,14 @@ namespace SM_ProyectoWeb.Controllers
             return View();
         }
 
-        //Registro de usuario 
+        [FiltroSeguridadSesion] //Fitro para que no puedas ir a las vistas sin estar logueado
+        [HttpGet]
+        public IActionResult CerrarSesion()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("IniciarSesion", "Login");
+        }
+
         [HttpGet]
         public IActionResult RegistrarUsuario()
         {
@@ -96,20 +103,18 @@ namespace SM_ProyectoWeb.Controllers
             return View();
         }
 
-        //Recuperar contraseña
         [HttpGet]
         public IActionResult RecuperarContrasenna()
         {
             return View();
         }
-
-        //Clase principal
+        
+        [FiltroSeguridadSesion]
         public IActionResult Principal()
         {
             return View();
         }
 
-        //Cifrado de contraseña
         private string Encrypt(string texto)
         {
             byte[] iv = new byte[16];

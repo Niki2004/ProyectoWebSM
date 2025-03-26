@@ -171,6 +171,7 @@
                             <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
                             <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
                             <li class="active"><a href="@Url.Action("RegistrarComentario","MisRecetas")">Comentarios</a></li>
+                            <li><a href="@Url.Action("RegistrarValoracion","MisRecetas")">Valoración</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -197,7 +198,7 @@
                                     <div class="dropdown-content-body">
                                         <ul>
                                             <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
-                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                            <li><a href="@Url.Action("CerrarSesion","Login")"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
                                         </ul>
                                     </div>
                                 </div>

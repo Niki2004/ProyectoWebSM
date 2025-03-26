@@ -7,6 +7,8 @@ using System.Text.Json;
 
 namespace SM_ProyectoWeb.Controllers
 {
+    [FiltroSeguridadSesion]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class MisRecetasController : Controller
     {
 
@@ -169,7 +171,6 @@ namespace SM_ProyectoWeb.Controllers
             return View(model);
         }
 
-
         [HttpGet]
         public IActionResult ConsultarComentario()
         {
@@ -177,7 +178,6 @@ namespace SM_ProyectoWeb.Controllers
             Console.WriteLine("Cantidad de comentarios: " + datosResult.Count);
             return View(datosResult);
         }
-
 
         [HttpGet]
         public IActionResult RegistrarComentario()
@@ -189,7 +189,6 @@ namespace SM_ProyectoWeb.Controllers
             CargarRecetasCombo();
             return View();
         }
-
 
         [HttpPost]
         public IActionResult RegistrarComentario(ComentarioModel model)
@@ -308,8 +307,7 @@ namespace SM_ProyectoWeb.Controllers
             }
         }
 
-
-       public IActionResult ConsultarRecetas(RecetaModel model)
+        public IActionResult ConsultarRecetas(RecetaModel model)
         {
             try
             {
@@ -567,6 +565,5 @@ namespace SM_ProyectoWeb.Controllers
 
             return RedirectToAction("ConsultarComentario", "MisRecetas");
         }
-
     }
 }

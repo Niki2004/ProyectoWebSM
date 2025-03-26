@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
     <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
     <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         .recipe-card {
             border-radius: 8px;
@@ -238,6 +240,7 @@
                             <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
                             <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
                             <li><a href="@Url.Action("ConsultarComentario","MisRecetas")">Comentarios</a></li>
+                            <li><a href="@Url.Action("RegistrarValoracion","MisRecetas")">Valoración</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -264,7 +267,7 @@
                                     <div class="dropdown-content-body">
                                         <ul>
                                             <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
-                                            <li><a href="#"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                            <li><a href="@Url.Action("CerrarSesion","Login")"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -304,10 +307,7 @@
                         <h3>Pancakes de Frutos Rojos con Canela</h3>
                         <p class="text-muted"><span class="recipe-category">Desayuno</span> • sábado, 08 marzo 2025 • Fácil</p>
                         <p>Deliciosos pancakes esponjosos acompañados de una mezcla de frutos rojos frescos y un toque de canela. El desayuno perfecto para comenzar el día con energía y buen sabor.</p>
-                        <p><strong>Ingredientes:</strong></p>
-                        <p>• Harina</p>
-                        <p>• Huevos</p>
-                        <p>• Fresas</p>      
+                        <p><strong>Ingredientes: Harina, Huevos y Fresas</strong></p>   
                     </div>
                 </div>
 
@@ -343,7 +343,6 @@
                                         <span class="recipe-category">@receta.Nombre_Categoria</span>
                                         <span>@receta.Fecha_Publicacion.ToString("dddd, dd MMMM yyyy")</span>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
