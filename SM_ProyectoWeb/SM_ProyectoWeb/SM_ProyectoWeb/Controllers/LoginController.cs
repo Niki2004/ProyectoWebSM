@@ -26,28 +26,45 @@ namespace SM_ProyectoWeb.Controllers
         [HttpPost]
         public IActionResult IniciarSesion(UsuarioModel model)
         {
-            model.Contrasenia = Encrypt(model.Contrasenia!);
-
-            using (var api = _httpClient.CreateClient())
+            try
             {
-                var url = _configuration.GetSection("Variables:urlApi").Value + "Login/IniciarSesion";
-                var response = api.PostAsJsonAsync(url, model).Result;
+                model.Contrasenia = Encrypt(model.Contrasenia!);
 
-                if (response.IsSuccessStatusCode)
+                using (var api = _httpClient.CreateClient())
                 {
-                    var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "Login/IniciarSesion";
+                    var response = api.PostAsJsonAsync(url, model).Result;
 
-                    if (result != null && result.Indicador)
+                    if (response.IsSuccessStatusCode)
                     {
-                        var datosResult = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Datos!);
+                        var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
 
-                        HttpContext!.Session.SetString("Token", datosResult!.Token!);
+                        if (result != null && result.Indicador)
+                        {
+                            var datosResult = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Datos!);
+                            Console.WriteLine($"Usuario autenticado - ID: {datosResult!.Id_Usuario}, Nombre: {datosResult.Nombre}");
 
-                        return RedirectToAction("Principal", "Login");
+                            HttpContext!.Session.SetString("Token", datosResult.Token!);
+                            HttpContext!.Session.SetString("Id_Usuario", datosResult.Id_Usuario.ToString());
+                            HttpContext!.Session.SetString("Nombre", datosResult.Nombre ?? "");
+
+                            return RedirectToAction("Principal", "Login");
+                        }
+                        else
+                        {
+                            TempData["Error"] = "Credenciales inválidas. Por favor, intente nuevamente.";
+                        }
                     }
-
-
+                    else
+                    {
+                        TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al iniciar sesión: {ex.Message}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
             }
 
             return View();

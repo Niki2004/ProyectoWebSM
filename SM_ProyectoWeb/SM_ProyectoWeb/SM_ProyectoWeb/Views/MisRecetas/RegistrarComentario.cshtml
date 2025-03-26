@@ -471,6 +471,26 @@
                 <div class="row">
                     <!-- Columna principal - Formulario de comentario -->
                     <div class="col-lg-8 col-md-12">
+                        @if (TempData["Mensaje"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                @TempData["Mensaje"]
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                @TempData["Error"]
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+
                         <!-- Tabs de navegación -->
                         <ul class="nav nav-tabs comment-tabs" id="commentTabs" role="tablist">
                             <li class="nav-item">
@@ -478,32 +498,32 @@
                                     <i class="ti-comment-alt mr-2"></i>Agregar Comentario
                                 </a>
                             </li>
-
                         </ul>
 
                         <div class="tab-content" id="commentTabsContent">
                             <!-- Pestaña para agregar comentario -->
                             <div class="tab-pane fade show active" id="add-comment" role="tabpanel" aria-labelledby="add-comment-tab">
-                                <form asp-action="RegistrarComentario" asp-controller="MisRecetas" method="post">
+                                <form asp-action="RegistrarComentario" asp-controller="MisRecetas" method="post" id="comentarioForm">
                                     <div class="form-section">
                                         <h4 class="form-title">
                                             <span class="section-icon"><i class="ti-comment-alt"></i></span>
                                             Nuevo Comentario
                                         </h4>
-                                        <!-- Campo oculto para el ID del usuario - asegúrate de que tenga un valor -->
-                                        <input type="hidden" class="form-control input-lg" asp-for="Id_Comentario" value="Id_Comentario" />
-                                        <input type="hidden" class="form-control input-lg" asp-for="Id_Usuario" value="Id_Usuario" />
+                                        <!-- Campo oculto para el ID del usuario -->
+                                        <input type="hidden" asp-for="Id_Usuario" value="@Context.Session.GetString("Id_Usuario")" />
                                         <div class="form-group">
                                             <label for="Id_Receta" class="required-field">Seleccionar Receta</label>
                                             <select class="form-control input-lg" asp-for="Id_Receta" asp-items="ViewBag.ListaRecetas"></select>
+                                            <span asp-validation-for="Id_Receta" class="text-danger"></span>
                                         </div>
                                         <div class="form-group mt-4">
                                             <label for="Contenido" class="required-field">Tu Comentario</label>
-                                            <input type="text" class="form-control input-lg" asp-for="Contenido" placeholder="Contenido">
+                                            <textarea class="form-control input-lg" asp-for="Contenido" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
+                                            <span asp-validation-for="Contenido" class="text-danger"></span>
                                             <small class="help-tip">Tu comentario ayudará a otros usuarios a decidir si preparar esta receta</small>
                                         </div>
                                         <!-- Asignar la fecha actual -->
-                                        <input type="hidden" class="form-control input-lg" asp-for="Fecha_Comentario" value="@DateTime.Now" />
+                                        <input type="hidden" asp-for="Fecha_Comentario" value="@DateTime.Now" />
                                     </div>
                                     <button type="submit" class="btn btn-primary">Publicar Comentario</button>
                                 </form>
@@ -593,15 +613,45 @@
             $('#commentTabs a[href="#add-comment"]').tab('show');
         }
 
-        // Agregar la fecha actual al campo oculto de fecha_comentario
+        // Verificar que el formulario existe y agregar el evento submit
         document.addEventListener('DOMContentLoaded', function() {
-            const now = new Date();
-            const formattedDate = now.toISOString().slice(0, 16);
-            const dateField = document.createElement('input');
-            dateField.type = 'hidden';
-            dateField.name = 'Fecha_Comentario';
-            dateField.value = formattedDate;
-            document.querySelector('form').appendChild(dateField);
+            var form = document.getElementById('comentarioForm');
+            if (form) {
+                console.log('Formulario encontrado, agregando evento submit');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevenir el envío por defecto
+                    console.log('Formulario enviado');
+                    
+                    var receta = document.getElementById('Id_Receta').value;
+                    var contenido = document.getElementById('Contenido').value;
+                    var idUsuario = document.querySelector('input[name="Id_Usuario"]').value;
+
+                    console.log('Id_Receta:', receta);
+                    console.log('Contenido:', contenido);
+                    console.log('Id_Usuario:', idUsuario);
+
+                    if (!receta) {
+                        alert('Por favor, seleccione una receta');
+                        return false;
+                    }
+
+                    if (!contenido.trim()) {
+                        alert('Por favor, escriba un comentario');
+                        return false;
+                    }
+
+                    if (!idUsuario) {
+                        alert('Error: No se encontró el ID del usuario. Por favor, inicie sesión nuevamente.');
+                        return false;
+                    }
+
+                    // Si todo está bien, enviar el formulario
+                    console.log('Formulario válido, procediendo con el envío');
+                    form.submit();
+                });
+            } else {
+                console.error('Formulario no encontrado');
+            }
         });
     </script>
 </body>

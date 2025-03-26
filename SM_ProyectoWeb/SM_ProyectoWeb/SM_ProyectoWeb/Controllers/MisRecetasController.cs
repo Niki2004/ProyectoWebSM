@@ -59,7 +59,11 @@ namespace SM_ProyectoWeb.Controllers
         [HttpGet]
         public IActionResult RegistrarComentario()
         {
-            CargarComentariosCombo();
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                return RedirectToAction("IniciarSesion", "Login");
+            }
+            CargarRecetasCombo();
             return View();
         }
 
@@ -67,34 +71,118 @@ namespace SM_ProyectoWeb.Controllers
         [HttpPost]
         public IActionResult RegistrarComentario(ComentarioModel model)
         {
-            using (var api = _httpClient.CreateClient())
+            try
             {
-                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarComentario";
-
-                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                var result = api.PostAsJsonAsync(url, model).Result;
-
-                if (result.IsSuccessStatusCode)
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
-                    return RedirectToAction("ConsultarComentario", "MisRecetas");
+                    TempData["Error"] = "No hay sesión activa. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Obtener el ID del usuario de la sesión
+                var idUsuarioStr = HttpContext.Session.GetString("Id_Usuario");
+                if (string.IsNullOrEmpty(idUsuarioStr))
+                {
+                    TempData["Error"] = "No se encontró el ID del usuario en la sesión. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Validar que el ID del usuario sea un número válido
+                if (!int.TryParse(idUsuarioStr, out int idUsuario))
+                {
+                    TempData["Error"] = "El ID del usuario no es válido. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Asignar el ID del usuario al modelo
+                model.Id_Usuario = idUsuario;
+
+                if (!ModelState.IsValid)
+                {
+                    foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        TempData["Error"] = modelError.ErrorMessage;
+                    }
+                    CargarRecetasCombo();
+                    return View(model);
+                }
+
+                Console.WriteLine($"Intentando registrar comentario - Id_Usuario: {model.Id_Usuario}, Id_Receta: {model.Id_Receta}");
+                Console.WriteLine($"Contenido: {model.Contenido}");
+                Console.WriteLine($"Fecha: {model.Fecha_Comentario}");
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarComentario";
+                    Console.WriteLine($"URL del API: {url}");
+                    Console.WriteLine($"Token: {HttpContext.Session.GetString("Token")}");
+
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var result = api.PostAsJsonAsync(url, model).Result;
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}");
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (response != null && response.Indicador)
+                        {
+                            TempData["Mensaje"] = "Comentario registrado exitosamente";
+                            return RedirectToAction("ConsultarComentario", "MisRecetas");
+                        }
+                        else
+                        {
+                            TempData["Error"] = response?.Mensaje ?? "Error al registrar el comentario";
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error del API: {responseContent}");
+                        TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                    }
                 }
             }
-
-            return View();
-        }
-
-        private void CargarComentariosCombo()
-        {
-            var datosResult = _utilitarios.ConsultarInfoComentario(0);
-            var recetasSelect = new List<SelectListItem>();
-
-            recetasSelect.Add(new SelectListItem { Value = string.Empty, Text = "-- Seleccione --" });
-            foreach (var item in datosResult)
+            catch (Exception ex)
             {
-                recetasSelect.Add(new SelectListItem { Value = item.Id_Receta.ToString(), Text = item.Titulo });
+                Console.WriteLine($"Error al registrar comentario: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
             }
 
-            ViewBag.ListaRecetas = recetasSelect;
+            CargarRecetasCombo();
+            return View(model);
+        }
+
+        private void CargarRecetasCombo()
+        {
+            using (var api = _httpClient.CreateClient())
+            {
+                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetas";
+                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                var response = api.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+                    if (result != null && result.Indicador)
+                    {
+                        var recetas = JsonSerializer.Deserialize<List<RecetaModel>>((JsonElement)result.Datos!);
+                        var recetasSelect = new List<SelectListItem>
+                        {
+                            new SelectListItem { Value = "", Text = "-- Seleccione --" }
+                        };
+
+                        foreach (var receta in recetas)
+                        {
+                            recetasSelect.Add(new SelectListItem { Value = receta.Id_Receta.ToString(), Text = receta.Titulo });
+                        }
+
+                        ViewBag.ListaRecetas = recetasSelect;
+                    }
+                }
+            }
         }
 
 

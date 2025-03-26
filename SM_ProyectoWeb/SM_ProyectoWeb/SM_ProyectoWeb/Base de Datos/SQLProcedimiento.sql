@@ -25,7 +25,7 @@ CREATE PROCEDURE [dbo].[IniciarSesion]
     @Contrasenia NVARCHAR(50)
 AS
 BEGIN
-    SELECT  U.Id_Usuario AS Id,
+    SELECT  U.Id_Usuario,
             U.Email AS Identificacion,
             U.Nombre AS NombreUsuario,
             U.Email AS Correo,
