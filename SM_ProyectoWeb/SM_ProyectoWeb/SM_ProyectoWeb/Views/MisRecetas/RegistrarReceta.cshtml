@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
     <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
     <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .recipe-card {
             border-radius: 8px;
@@ -332,6 +333,23 @@
         .categories-select {
             height: 46px;
         }
+
+        .preview-image {
+            max-width: 300px;
+            max-height: 300px;
+            margin-top: 10px;
+            display: none;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .upload-area:hover {
+            border-color: #4e73df;
+        }
     </style>
 </head>
 <body>
@@ -511,13 +529,13 @@
                                         </h4>
 
                                         <div class="form-group">
-                                            <label for="Imagen" class="required-field">Subir Imagen</label>
-                                            <div class="image-preview" id="imagePreview">
-                                                <span class="image-preview-text">Vista previa de la imagen</span>
-                                                <img src="" alt="Vista previa de la imagen">
+                                            <label>Imagen de la Receta</label>
+                                            <div class="upload-area" onclick="document.getElementById('imagen').click()">
+                                                <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                                                <p>Haga clic para seleccionar una imagen</p>
+                                                <input type="file" id="imagen" name="imagen" accept="image/*" style="display: none;" required />
                                             </div>
-                                            <input type="file" class="form-control-file" id="Imagen" name="Imagen" accept="image/*" required>
-                                            <small class="help-tip">La imagen debe ser clara y mostrar el plato terminado (formatos: JPG, PNG)</small>
+                                            <img id="preview" class="preview-image" />
                                         </div>
                                     </div>
 
@@ -667,23 +685,16 @@
         });
 
         // Vista previa de la imagen
-        document.getElementById('Imagen').addEventListener('change', function(e) {
-            const preview = document.getElementById('imagePreview');
-            const img = preview.querySelector('img');
-            const file = e.target.files[0];
-
+        document.getElementById('imagen').addEventListener('change', function(e) {
+            var file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
-
+                var reader = new FileReader();
                 reader.onload = function(e) {
-                    img.src = e.target.result;
-                    preview.classList.add('has-image');
+                    var preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
                 }
-
                 reader.readAsDataURL(file);
-            } else {
-                img.src = '';
-                preview.classList.remove('has-image');
             }
         });
 
@@ -695,7 +706,7 @@
             const categoria = document.getElementById('Id_Categoria').value;
             const descripcion = document.getElementById('Descripcion').value;
             const ingredientes = document.querySelectorAll('input[name="Ingrediente"]');
-            const imagen = document.getElementById('Imagen').files[0];
+            const imagen = document.getElementById('imagen').files[0];
             const platoReciente = document.getElementById('PlatoReciente').checked;
             const platoDestacada = document.getElementById('PlatoDestacada').checked;
 

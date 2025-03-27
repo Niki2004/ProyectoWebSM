@@ -40,7 +40,7 @@ namespace SM_ProyectoWeb.Controllers
                     return RedirectToAction("IniciarSesion", "Login");
                 }
 
-                Console.WriteLine("=== INICIO REGISTRO DE RECETA ===");
+                Console.WriteLine("\n=== INICIO REGISTRO DE RECETA ===");
                 Console.WriteLine($"Token: {HttpContext.Session.GetString("Token")}");
                 Console.WriteLine($"Id_Categoria: {model.Id_Categoria}");
                 Console.WriteLine($"Titulo: {model.Titulo}");
@@ -80,21 +80,50 @@ namespace SM_ProyectoWeb.Controllers
                     var file = Request.Form.Files[0];
                     if (file != null && file.Length > 0)
                     {
-                        using (var ms = new MemoryStream())
+                        Console.WriteLine("\n=== Procesando imagen ===");
+                        Console.WriteLine($"Nombre del archivo: {file.FileName}");
+                        Console.WriteLine($"Tipo de contenido: {file.ContentType}");
+                        Console.WriteLine($"Tamaño del archivo: {file.Length} bytes");
+                        
+                        // Validar el tipo de imagen
+                        if (!file.ContentType.StartsWith("image/"))
                         {
-                            file.CopyTo(ms);
-                            model.Imagen = Convert.ToBase64String(ms.ToArray());
-                            Console.WriteLine($"Imagen procesada: {model.Imagen.Length} bytes");
+                            Console.WriteLine($"Error: El archivo no es una imagen válida. Tipo: {file.ContentType}");
+                            TempData["Error"] = "El archivo debe ser una imagen válida";
+                            return View(model);
                         }
+
+                        // Crear directorio para imágenes si no existe
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+
+                        // Generar nombre único para el archivo
+                        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        // Guardar el archivo
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            file.CopyTo(stream);
+                        }
+
+                        // Guardar la ruta relativa en el modelo
+                        model.Imagen = $"/uploads/{uniqueFileName}";
+                        Console.WriteLine($"Imagen guardada en: {model.Imagen}");
                     }
                     else
                     {
+                        Console.WriteLine("Error: El archivo está vacío");
                         TempData["Error"] = "La imagen es obligatoria";
                         return View(model);
                     }
                 }
                 else
                 {
+                    Console.WriteLine("Error: No se encontró ningún archivo en la solicitud");
                     TempData["Error"] = "La imagen es obligatoria";
                     return View(model);
                 }
@@ -102,7 +131,7 @@ namespace SM_ProyectoWeb.Controllers
                 // Obtener los ingredientes del formulario
                 var ingredientes = Request.Form["Ingrediente"].ToList();
                 model.Ingrediente = string.Join(", ", ingredientes.Where(i => !string.IsNullOrEmpty(i)));
-                Console.WriteLine($"Ingredientes procesados: {model.Ingrediente}");
+                Console.WriteLine($"\nIngredientes procesados: {model.Ingrediente}");
 
                 // Procesar los valores de los checkboxes
                 model.PlatoReciente = Request.Form.ContainsKey("PlatoReciente");
@@ -112,7 +141,7 @@ namespace SM_ProyectoWeb.Controllers
                 using (var api = _httpClient.CreateClient())
                 {
                     var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarReceta";
-                    Console.WriteLine($"URL del API: {url}");
+                    Console.WriteLine($"\nURL del API: {url}");
 
                     api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
                     
@@ -132,7 +161,7 @@ namespace SM_ProyectoWeb.Controllers
                     var jsonData = JsonSerializer.Serialize(recetaData);
                     Console.WriteLine($"Datos a enviar al API: {jsonData}");
 
-                    Console.WriteLine("Enviando datos al API...");
+                    Console.WriteLine("\nEnviando datos al API...");
                     var result = api.PostAsJsonAsync(url, recetaData).Result;
 
                     Console.WriteLine($"Código de respuesta: {result.StatusCode}");
@@ -340,7 +369,33 @@ namespace SM_ProyectoWeb.Controllers
                                 {
                                     foreach (var receta in datosResult)
                                     {
-                                        Console.WriteLine($"Receta encontrada - ID: {receta.Id_Receta}, Título: {receta.Titulo}");
+                                        Console.WriteLine($"\n=== Receta encontrada ===");
+                                        Console.WriteLine($"ID: {receta.Id_Receta}");
+                                        Console.WriteLine($"Título: {receta.Titulo}");
+                                        
+                                        if (!string.IsNullOrEmpty(receta.Imagen))
+                                        {
+                                            Console.WriteLine($"Imagen presente - Longitud: {receta.Imagen.Length}");
+                                            Console.WriteLine($"Primeros caracteres de la imagen: {receta.Imagen.Substring(0, Math.Min(50, receta.Imagen.Length))}");
+                                            
+                                            // Verificar el formato de la imagen
+                                            if (receta.Imagen.StartsWith("/9j/"))
+                                            {
+                                                Console.WriteLine("Formato de imagen: JPEG");
+                                            }
+                                            else if (receta.Imagen.StartsWith("iVBORw0KGgo"))
+                                            {
+                                                Console.WriteLine("Formato de imagen: PNG");
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("ADVERTENCIA: Formato de imagen no reconocido");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("No hay imagen en esta receta");
+                                        }
                                     }
                                 }
                                 
