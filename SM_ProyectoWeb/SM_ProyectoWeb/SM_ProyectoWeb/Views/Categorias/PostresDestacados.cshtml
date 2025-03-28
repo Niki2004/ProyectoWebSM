@@ -1,1 +1,371 @@
-﻿
+﻿@using SM_ProyectoWeb.Models
+@model List<RecetaModel>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recetas de la Felicidad</title>
+    <link rel="stylesheet" href="~/assets/css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
+    <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        .recipe-card {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 25px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+            .recipe-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            }
+
+        .recipe-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .recipe-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s;
+            }
+
+        .recipe-card:hover .recipe-image img {
+            transform: scale(1.05);
+        }
+
+        .recipe-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .recipe-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .recipe-category {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .recipe-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .recipe-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .recipe-btn-view {
+            background: #4e73df;
+            color: white;
+        }
+
+            .recipe-btn-view:hover {
+                background: #375ad3;
+            }
+
+        .recipe-btn-save {
+            background: #f8f9fa;
+            color: #555;
+        }
+
+            .recipe-btn-save:hover {
+                background: #e2e6ea;
+            }
+
+        .recipe-filter {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('~/img/food-hero.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+            .hero-section h1 {
+                font-size: 36px;
+                margin-bottom: 15px;
+            }
+
+            .hero-section p {
+                font-size: 18px;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        .featured-recipe {
+            margin-bottom: 40px;
+        }
+
+            .featured-recipe img {
+                border-radius: 8px;
+                width: 100%;
+                max-height: 400px;
+                object-fit: cover;
+            }
+
+        .recipe-ingredients {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .recipe-ingredients {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 15px;
+        }
+
+        .ingredient-item {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 5px;
+        }
+
+            .ingredient-item::before {
+                content: "•";
+                position: absolute;
+                left: 5px;
+                color: #000000;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+                <ul>
+                    <li class="label">MENÚ PRINCIPAL</li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                        <ul>
+                            <li><a href="@Url.Action("DesayunosDestacados","Categorias")">Los más Destacadas</a></li>
+                            <li><a href="@Url.Action("DesayunosRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Entradas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("EntradasDestacados","Categorias")">Las más Destacadas</a></li>
+                            <li><a href="@Url.Action("EntradasRecientes","Categorias")">Añadidas Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Platos Fuertes <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PlatosFuertesDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PlatosFuertesRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PostresRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Mis Recetas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
+                            <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
+                            <li><a href="@Url.Action("ConsultarComentario","MisRecetas")">Comentarios</a></li>
+                            <li><a href="@Url.Action("RegistrarValoracion","MisRecetas")">Valoración</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <ul>
+                            <li class="header-icon dib">
+                                <span class="user-avatar">John <i class="ti-angle-down f-s-10"></i></span>
+                                <div class="drop-down dropdown-profile">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li><a href="#"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                            <li><a href="@Url.Action("CerrarSesion","Login")"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1>Descubre el placer de cocinar</h1>
+                    <p>Explora cientos de recetas deliciosas y fáciles de preparar</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h2 class="text-center">Postres Destacados</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    @foreach (var receta in Model)
+                    {
+                        <div class="col-lg-4 col-md-6">
+                            <div class="recipe-card">
+
+                                <div class="recipe-image">
+                                    @if (!string.IsNullOrEmpty(receta.Imagen))
+                                    {
+                                        <img src="@receta.Imagen"
+                                             alt="@receta.Titulo"
+                                             onerror="console.error('Error al cargar la imagen:', this.src); this.src='/img/default-recipe.jpg';"
+                                             style="width: 100%; height: 100%; object-fit: cover;"
+                                             onload="console.log('Imagen cargada exitosamente:', this.src)">
+                                    }
+                                    else
+                                    {
+                                        <img src="/img/default-recipe.jpg" alt="@receta.Titulo" style="width: 100%; height: 100%; object-fit: cover;">
+                                    }
+                                    @if (receta.PlatoDestacada)
+                                    {
+                                        <div class="recipe-badge">Destacado</div>
+                                    }
+                                </div>
+
+                                <div class="recipe-content">
+                                    <h4 class="recipe-title">@receta.Titulo</h4>
+                                    <div class="ingredients-section">
+
+                                        Ingredientes:
+                                        <ul class="recipe-ingredients">
+                                            @foreach (var ingrediente in receta.Ingrediente.Split(','))
+                                            {
+                                                <li class="ingredient-item">@ingrediente.Trim()</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    Preparación:
+                                    <p class="recipe-description">@receta.Descripcion</p>
+                                    <div class="recipe-meta">
+                                        <span class="recipe-category">@receta.Nombre_Categoria</span>
+                                        <span>@receta.Fecha_Publicacion.ToString("dddd, dd MMMM yyyy")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="footer">
+                <p>© Las Recetas de la Felicidad</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <script src="~/assets/js/lib/menubar/sidebar.js"></script>
+    <script src="~/assets/js/lib/bootstrap.min.js"></script>
+    <script src="~/assets/js/scripts.js"></script>
+
+</body>
+</html>

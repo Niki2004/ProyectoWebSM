@@ -46,7 +46,7 @@ BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
 	       PlatoReciente, PlatoDestacada, Imagen 
     FROM Receta
-    WHERE PlatoDestacada = 0 AND Id_Categoria = 1;
+    WHERE PlatoDestacada = 1 AND Id_Categoria = 1;
 END;
 GO
 
@@ -70,7 +70,7 @@ BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
 	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
-    WHERE PlatoDestacada = 0 AND Id_Categoria = 2;
+    WHERE PlatoDestacada = 1 AND Id_Categoria = 2;
 END;
 GO
 
@@ -94,7 +94,7 @@ BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
 	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
-    WHERE PlatoDestacada = 0 AND Id_Categoria = 3;
+    WHERE PlatoDestacada = 1 AND Id_Categoria = 3;
 END;
 GO
 
@@ -118,7 +118,7 @@ BEGIN
     SELECT Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion,
 	       PlatoReciente, PlatoDestacada, Imagen
     FROM Receta
-    WHERE PlatoDestacada = 0 AND Id_Categoria = 4;
+    WHERE PlatoDestacada = 1 AND Id_Categoria = 4;
 END;
 GO
 

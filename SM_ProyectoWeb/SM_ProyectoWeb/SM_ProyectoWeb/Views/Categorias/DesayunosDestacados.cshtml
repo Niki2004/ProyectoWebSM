@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
     <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
     <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         .recipe-card {
             border-radius: 8px;
@@ -169,208 +171,31 @@
                 object-fit: cover;
             }
 
-        .form-section {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .form-title {
-            color: #333;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-control {
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            padding: 10px 15px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-
-        textarea.form-control {
-            min-height: 150px;
-        }
-
-        .custom-checkbox .custom-control-label {
-            font-weight: normal;
-        }
-
-        .submit-btn {
-            background: #4e73df;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 12px 25px;
-            font-weight: 600;
-            transition: all 0.3s;
-            margin-top: 15px;
-        }
-
-            .submit-btn:hover {
-                background: #375ad3;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-
-            .submit-btn:active {
-                transform: translateY(0);
-            }
-
-        .cancel-btn {
-            background: #f8f9fa;
-            color: #555;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 12px 25px;
-            font-weight: 600;
-            transition: all 0.3s;
-            margin-top: 15px;
-            margin-right: 10px;
-        }
-
-            .cancel-btn:hover {
-                background: #e2e6ea;
-            }
-
-        .section-icon {
-            background: #f1f5ff;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            color: #4e73df;
-        }
-
-        .card-header-action {
-            float: right;
-        }
-
-        .help-tip {
-            color: #6c757d;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        .required-field::after {
-            content: "*";
-            color: #dc3545;
-            margin-left: 4px;
-        }
-
-        .comment-list {
-            margin-top: 20px;
-        }
-
-        .comment-item {
-            border-left: 3px solid #4e73df;
-            padding: 15px;
+        .recipe-ingredients {
+            list-style-type: disc;
+            padding-left: 20px;
             margin-bottom: 15px;
-            background: #f8f9fa;
-            border-radius: 0 8px 8px 0;
         }
 
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+        .recipe-ingredients {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 15px;
         }
 
-        .comment-author {
-            font-weight: bold;
-            color: #333;
+        .ingredient-item {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 5px;
         }
 
-        .comment-date {
-            color: #888;
-            font-size: 12px;
-        }
-
-        .comment-body {
-            color: #555;
-        }
-
-        .recipe-select {
-            height: 46px;
-        }
-
-        .star-rating {
-            margin-top: 10px;
-        }
-
-        .rating-text {
-            margin-left: 10px;
-            font-weight: bold;
-        }
-
-        .comment-tabs {
-            margin-bottom: 20px;
-        }
-
-            .comment-tabs .nav-link {
-                border-radius: 8px;
-                color: #555;
-                padding: 10px 15px;
+            .ingredient-item::before {
+                content: "•"; 
+                position: absolute;
+                left: 5px;
+                color: #000000;
+                font-weight: bold;
             }
-
-                .comment-tabs .nav-link.active {
-                    background-color: #4e73df;
-                    color: white;
-                    border-color: #4e73df;
-                }
-
-        .recipe-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-            .recipe-item:hover {
-                background: #f1f5ff;
-            }
-
-            .recipe-item img {
-                width: 60px;
-                height: 60px;
-                object-fit: cover;
-                border-radius: 4px;
-                margin-right: 15px;
-            }
-
-        .recipe-item-name {
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-        }
-
-        .recipe-item-category {
-            color: #888;
-            font-size: 12px;
-        }
-
-        .time-badge {
-            background: #ff6b6b;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            margin-left: 5px;
-        }
     </style>
 </head>
 <body>
@@ -414,7 +239,6 @@
                         <ul>
                             <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
                             <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
-                            <li><a href="@Url.Action("Favoritas","Recetas")">Marcadas como Favoritas</a></li>
                             <li><a href="@Url.Action("ConsultarComentario","MisRecetas")">Comentarios</a></li>
                             <li><a href="@Url.Action("RegistrarValoracion","MisRecetas")">Valoración</a></li>
                         </ul>
@@ -423,6 +247,7 @@
             </div>
         </div>
     </div>
+
     <div class="header">
         <div class="container-fluid">
             <div class="row">
@@ -454,6 +279,7 @@
         </div>
     </div>
 
+   
     <div class="content-wrap">
         <div class="main">
             <div class="container-fluid">
@@ -467,26 +293,12 @@
                     <div class="col-lg-12 p-r-0 title-margin-right">
                         <div class="page-header">
                             <div class="page-title">
-                                <h2 class="text-center">Desayunos destacados </h2>
+                                <h2 class="text-center">Desayunos Destacados</h2>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row featured-recipe">
-                    <div class="col-lg-6">
-                        <img src="~/img/pancake.jpeg" alt="Pancakes de Frutos Rojos con Canela">
-                    </div>
-                    <div class="col-lg-6">
-                        <h3>Pancakes de Frutos Rojos con Canela</h3>
-                        <p class="text-muted"><span class="recipe-category">Desayuno</span> • 25 minutos • Fácil</p>
-                        <p>Deliciosos pancakes esponjosos acompañados de una mezcla de frutos rojos frescos y un toque de canela. El desayuno perfecto para comenzar el día con energía y buen sabor.</p>
-                        <p><strong>Ingredientes principales:</strong> Harina, huevos, fresas, arándanos, frambuesas, canela, miel</p>
-
-                    </div>
-                </div>
-
-                @* Verificar porque no se muestra *@
                 <div class="row">
                     @foreach (var receta in Model)
                     {
@@ -494,7 +306,18 @@
                             <div class="recipe-card">
 
                                 <div class="recipe-image">
-                                    <img src="@receta.Imagen" alt="@receta.Titulo">
+                                    @if (!string.IsNullOrEmpty(receta.Imagen))
+                                    {
+                                        <img src="@receta.Imagen" 
+                                             alt="@receta.Titulo" 
+                                             onerror="console.error('Error al cargar la imagen:', this.src); this.src='/img/default-recipe.jpg';"
+                                             style="width: 100%; height: 100%; object-fit: cover;"
+                                             onload="console.log('Imagen cargada exitosamente:', this.src)">
+                                    }
+                                    else
+                                    {
+                                        <img src="/img/default-recipe.jpg" alt="@receta.Titulo" style="width: 100%; height: 100%; object-fit: cover;">
+                                    }
                                     @if (receta.PlatoDestacada)
                                     {
                                         <div class="recipe-badge">Destacado</div>
@@ -503,12 +326,22 @@
 
                                 <div class="recipe-content">
                                     <h4 class="recipe-title">@receta.Titulo</h4>
+                                    <div class="ingredients-section">
+                                        
+                                    Ingredientes:
+                                        <ul class="recipe-ingredients">
+                                            @foreach (var ingrediente in receta.Ingrediente.Split(','))
+                                            {
+                                                <li class="ingredient-item">@ingrediente.Trim()</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                   Preparación:
                                     <p class="recipe-description">@receta.Descripcion</p>
                                     <div class="recipe-meta">
                                         <span class="recipe-category">@receta.Nombre_Categoria</span>
-                                        <span>@receta.Fecha_Publicacion min</span>
+                                        <span>@receta.Fecha_Publicacion.ToString("dddd, dd MMMM yyyy")</span>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -533,6 +366,6 @@
     <script src="~/assets/js/lib/menubar/sidebar.js"></script>
     <script src="~/assets/js/lib/bootstrap.min.js"></script>
     <script src="~/assets/js/scripts.js"></script>
-
+                
 </body>
 </html>
