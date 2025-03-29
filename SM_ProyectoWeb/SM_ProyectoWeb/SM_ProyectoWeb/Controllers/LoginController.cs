@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SM_ProyectoWeb.Models;
+using System;
+using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -41,12 +45,28 @@ namespace SM_ProyectoWeb.Controllers
 
                         if (result != null && result.Indicador)
                         {
-                            var datosResult = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Datos!);
-                            Console.WriteLine($"Usuario autenticado - ID: {datosResult!.Id_Usuario}, Nombre: {datosResult.Nombre}");
 
-                            HttpContext!.Session.SetString("Token", datosResult.Token!);
-                            HttpContext!.Session.SetString("Id_Usuario", datosResult.Id_Usuario.ToString());
-                            HttpContext!.Session.SetString("Nombre", datosResult.Nombre ?? "");
+                            using (var api2 = _httpClient.CreateClient())
+                            {
+                                var url2 = _configuration.GetSection("Variables:urlApi").Value + "Login/ObtenerUsuarioPorCorreoYContrasenia";
+
+                                var response2 = api2.PostAsJsonAsync(url2, model).Result; 
+
+                                if (response2.IsSuccessStatusCode)
+                                {
+                                    var result2 = response2.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+                                    if (result2 != null && result2.Indicador)
+                                    {
+                                        var datosResult2 = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result2.Datos!);
+                                        HttpContext!.Session.SetString("Token", datosResult2.Token!);
+                                        HttpContext!.Session.SetString("Id_Usuario", datosResult2.Id_Usuario.ToString());
+                                        HttpContext!.Session.SetString("Nombre", datosResult2.Nombre ?? "");
+
+                                        Debug.WriteLine($"Nombre User: {datosResult2.Nombre}");
+                                    }
+                                }
+                            }
 
                             return RedirectToAction("Principal", "Login");
                         }
@@ -108,10 +128,95 @@ namespace SM_ProyectoWeb.Controllers
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public IActionResult Perfil()
+        {
+            UsuarioModel? usuario = null;
+            RolModel? rol = null;
+
+            try
+            {
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + $"Login/ObtenerUsuarioPorId/{HttpContext.Session.GetString("Id_Usuario")}";
+                    var response = api.GetAsync(url).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+                        if (result != null && result.Indicador)
+                        {
+                            usuario = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Datos!);
+
+
+                            if (usuario != null)
+                            {
+
+                                ViewBag.Nombre = usuario.Nombre;
+                                ViewBag.Email = usuario.Email;
+                                ViewBag.Id_Usuario = usuario.Id_Usuario;
+                            }
+                        }
+                        else
+                        {
+                            TempData["Error"] = "No se pudo obtener la información del usuario.";
+                        }
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Hubo un problema al conectarse con la API.";
+                    }
+                }
+
+                using (var api2 = _httpClient.CreateClient())
+                {
+                    var url2 = _configuration.GetSection("Variables:urlApi").Value + $"Rol/ObtenerRolePorId/{usuario.Id_Rol}";
+                    api2.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var response2 = api2.GetAsync(url2).Result;
+
+                    if (response2.IsSuccessStatusCode)
+                    {
+                        var result2 = response2.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+                        if (result2 != null && result2.Indicador)
+                        {
+                            rol = JsonSerializer.Deserialize<RolModel>((JsonElement)result2.Datos!);
+
+
+                            if (rol != null)
+                            {
+                                ViewBag.Rol = rol.Rol;
+                                ViewBag.Id_Rol = rol.Id_Rol;
+                            }
+                   
+                        }
+                        else
+                        {
+                            TempData["Error"] = "No se pudo obtener la información del Rol.";
+                        }
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Hubo un problema al conectarse con la API.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Ocurrió un error inesperado: {ex.Message}";
+            }
+
+            return View(usuario);
+        }
+
+
         [FiltroSeguridadSesion]
         public IActionResult Principal()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             return View();
         }
 

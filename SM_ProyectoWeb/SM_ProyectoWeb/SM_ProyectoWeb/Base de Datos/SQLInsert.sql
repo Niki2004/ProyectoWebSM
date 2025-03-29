@@ -16,6 +16,16 @@ INSERT INTO Usuario (Nombre, Email, Contrasenia, Id_Rol, Id_Estado) VALUES
 ('Andres Chavarria', 'Andres@Chavarria.com', 'mendezluis', 1, 1),
 ('Carmel del cielo', 'Carmel@cielo.com', 'ruizelena', 1, 2);
 
+-- Insertando en Categoria
+-- Desayunos
+INSERT INTO Categoria (Nombre)
+VALUES
+('Desayunos'),
+('Entradas'),
+('Platos Fuertes'),
+('Postres');
+
+
 -- Insert Receta
 INSERT INTO [ProyectoWebAvanzada].[dbo].[Receta] 
 (Id_Categoria, Titulo, Ingrediente, Descripcion, Fecha_Publicacion, PlatoReciente, PlatoDestacada, Imagen)
@@ -72,15 +82,5 @@ INSERT INTO Valoracion (Puntuacion, Id_Usuario, Id_Receta) VALUES
 (4, 5, 5),
 (5, 6, 5);
 
--- Insertando en Categoria
--- Desayunos
-INSERT INTO Categoria (Nombre)
-VALUES
-('Desayunos'),
-('Entradas'),
-('Platos Fuertes'),
-('Postres');
 
---En caso de hacer corrido la tabla de recetas sin imagen corran este comando 
-ALTER TABLE Receta
-ADD Imagen NVARCHAR(255) NULL;
+

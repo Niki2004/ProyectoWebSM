@@ -26,6 +26,8 @@ namespace SM_ProyectoWeb.Controllers
         [HttpGet]
         public IActionResult RegistrarReceta()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             return View();
         }
 
@@ -203,6 +205,8 @@ namespace SM_ProyectoWeb.Controllers
         [HttpGet]
         public IActionResult ConsultarComentario()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             var datosResult = _utilitarios.ConsultarInfoComentario(0);
             Console.WriteLine("Cantidad de comentarios: " + datosResult.Count);
             return View(datosResult);
@@ -211,6 +215,8 @@ namespace SM_ProyectoWeb.Controllers
         [HttpGet]
         public IActionResult RegistrarComentario()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 return RedirectToAction("IniciarSesion", "Login");
@@ -308,6 +314,8 @@ namespace SM_ProyectoWeb.Controllers
 
         private void CargarRecetasCombo()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetas";
@@ -338,6 +346,8 @@ namespace SM_ProyectoWeb.Controllers
 
         public IActionResult ConsultarRecetas(RecetaModel model)
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             try
             {
                 Console.WriteLine("=== INICIO CONSULTA DE RECETAS ===");
@@ -434,6 +444,8 @@ namespace SM_ProyectoWeb.Controllers
         [HttpGet]
         public IActionResult ModificarComentario(long id)
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             try
             {
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
@@ -471,6 +483,7 @@ namespace SM_ProyectoWeb.Controllers
         [HttpPost]
         public IActionResult ModificarComentario(long id, ComentarioModel model)
         {
+
             try
             {
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
@@ -556,6 +569,7 @@ namespace SM_ProyectoWeb.Controllers
         [HttpPost]
         public IActionResult EliminarComentario(long id)
         {
+
             try
             {
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))

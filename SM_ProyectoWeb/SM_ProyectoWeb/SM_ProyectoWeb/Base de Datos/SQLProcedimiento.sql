@@ -295,3 +295,64 @@ BEGIN
    INSERT INTO [dbo].[Errores] (Id_Usuario, Descripcion, Origen, Fecha_Publicacion)
    VALUES (@Id_Usuario, @Descripcion, @Origen, GETDATE());
 END;
+
+------------------------ Obtener Usuario Por Correo Y Contrasenia ----------------------
+
+CREATE PROCEDURE ObtenerUsuarioPorCorreoYContrasenia
+    @Email NVARCHAR(255),
+    @Contrasenia NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        U.Id_Usuario,
+        U.Id_Estado,
+        U.Id_Rol,
+        U.Nombre,
+        U.Email
+    FROM 
+        Usuario U
+    WHERE 
+        U.Email = @Email AND U.Contrasenia = @Contrasenia;
+END;
+GO
+
+------------------------ Obtener Usuario Por Id ----------------------
+
+CREATE PROCEDURE ObtenerUsuarioPorId
+    @Id_Usuario BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        U.Id_Usuario,
+        U.Id_Estado,
+        U.Id_Rol,
+        U.Nombre,
+        U.Email
+    FROM 
+        Usuario U
+    WHERE 
+        U.Id_Usuario = @Id_Usuario;
+END;
+GO
+
+------------------------ Obtener Rol Por Id ----------------------
+
+CREATE PROCEDURE ObtenerRolePorId
+    @Id_Role BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        U.Id_Rol,
+        U.Rol
+    FROM 
+        Roles U
+    WHERE 
+        U.Id_Rol = @Id_Role;
+END;
+GO

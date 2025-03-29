@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using SM_ProyectoApi.Models;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -80,6 +81,64 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
+        [HttpPost]  
+        [Route("ObtenerUsuarioPorCorreoYContrasenia")]
+        public IActionResult ObtenerUsuarioPorCorreoYContrasenia([FromBody] UsuarioModel model)
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var result = context.QueryFirstOrDefault<UsuarioModel>("ObtenerUsuarioPorCorreoYContrasenia",
+                    new { model.Email, model.Contrasenia }, commandType: System.Data.CommandType.StoredProcedure);
+
+                var respuesta = new RespuestaModel();
+
+                if (result != null)
+                {
+                    result.Token = GenerarToken(result.Id_Usuario);
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Su información se ha validado correctamente";
+                    respuesta.Datos = result;
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "Su información no se ha validado correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("ObtenerUsuarioPorId/{id}")]
+        public IActionResult ObtenerUsuarioPorId(long id)
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+
+                    var result = context.QueryFirstOrDefault<UsuarioModel>("ObtenerUsuarioPorId",
+                        new { Id_Usuario = id }, commandType: System.Data.CommandType.StoredProcedure);
+
+                     var respuesta = new RespuestaModel();
+
+                if (result != null)
+                    {
+                        respuesta.Indicador = true;
+                        respuesta.Mensaje = "Usuario encontrado correctamente.";
+                        respuesta.Datos = result;
+                    }
+                    else
+                    {
+                        respuesta.Indicador = false;
+                        respuesta.Mensaje = "Usuario no encontrado.";
+                    }
+                
+
+                return Ok(respuesta);
+            }
+        }
+    
         private string GenerarToken(long Id_Usuario)
         {
             string SecretKey = _configuration.GetSection("Variables:llaveToken").Value!;

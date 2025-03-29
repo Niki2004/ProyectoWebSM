@@ -17,12 +17,15 @@ namespace SM_ProyectoWeb.Controllers
         {
             _httpClient = httpClient;
             _configuration = configuration;
+
         }
 
         //Desayunos
         [HttpGet]
         public IActionResult DesayunosDestacados()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/DesayunosDestacados";
@@ -47,6 +50,8 @@ namespace SM_ProyectoWeb.Controllers
 
         public IActionResult DesayunosRecientes()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/DesayunosRecientes";
@@ -72,6 +77,8 @@ namespace SM_ProyectoWeb.Controllers
         //Entradas
         public IActionResult EntradasDestacados()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/EntradasDestacados";
@@ -96,6 +103,8 @@ namespace SM_ProyectoWeb.Controllers
 
         public IActionResult EntradasRecientes()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/EntradasRecientes";
@@ -121,6 +130,8 @@ namespace SM_ProyectoWeb.Controllers
         //PlatosFuertes
         public IActionResult PlatosFuertesDestacados()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/PlatosFuertesDestacados";
@@ -145,6 +156,8 @@ namespace SM_ProyectoWeb.Controllers
 
         public IActionResult PlatosFuertesRecientes()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/PlatosFuertesRecientes";
@@ -170,6 +183,8 @@ namespace SM_ProyectoWeb.Controllers
         //Postres 
         public IActionResult PostresDestacados()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/PostresDestacados";
@@ -194,6 +209,8 @@ namespace SM_ProyectoWeb.Controllers
 
         public IActionResult PostresRecientes()
         {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             using (var api = _httpClient.CreateClient())
             {
                 var url = _configuration.GetSection("Variables:urlApi").Value + "Categorias/PostresRecientes";

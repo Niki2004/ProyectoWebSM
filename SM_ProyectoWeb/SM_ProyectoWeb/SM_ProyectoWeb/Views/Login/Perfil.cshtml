@@ -1,0 +1,366 @@
+﻿@using SM_ProyectoWeb.Models
+@model UsuarioModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<!-- Estilos responsivos -->
+<style>
+    /* Estilos generales responsivos */
+    .recipe-content {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .recipe-image-container {
+        max-width: 100% !important;
+        margin: 20px auto !important;
+    }
+
+    .recipe-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+        .recipe-info span {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+    .related-recipes .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .related-recipes .col-md-4 {
+        flex: 0 0 100%;
+        padding: 10px 0;
+    }
+
+    /* Estilos para el perfil de usuario */
+    .user-profile-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        padding: 40px;
+        margin: 40px auto;
+        max-width: 900px;
+        width: 85%;
+    }
+
+    .user-profile-header {
+        border-bottom: 2px solid #f0f0f0;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .user-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: #263238; /* Color similar a la barra lateral */
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        margin-right: 25px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .user-title h2 {
+        margin: 0;
+        color: #263238;
+        font-size: 32px;
+    }
+
+    .user-title p {
+        margin: 8px 0 0;
+        color: #78909c;
+        font-size: 18px;
+    }
+
+    .user-info-section {
+        margin-bottom: 35px;
+    }
+
+        .user-info-section h3 {
+            color: #263238;
+            font-size: 22px;
+            margin-bottom: 20px;
+            border-left: 5px solid #263238; /* Cambiado a color similar a la barra lateral */
+            padding-left: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+    .info-item {
+        padding: 16px 0;
+        border-bottom: 1px dashed #eceff1;
+        display: flex;
+        font-size: 18px;
+    }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+    .info-label {
+        font-weight: bold;
+        width: 150px;
+        color: #455a64;
+    }
+
+    .info-value {
+        flex: 1;
+        color: #37474f;
+    }
+
+    .profile-buttons {
+        text-align: center;
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .edit-profile-btn {
+        background-color: #263238; /* Cambiado a color similar a la barra lateral */
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .edit-profile-btn:hover {
+            background-color: #37474f; /* Versión más clara para hover */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-decoration: none;
+            color: white;
+        }
+
+    .back-btn {
+        background-color: #455a64;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .back-btn:hover {
+            background-color: #546e7a;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-decoration: none;
+            color: white;
+        }
+
+    .main-header {
+        text-align: center;
+        margin-top: 30px;
+        color: #263238;
+        font-size: 36px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    media (max-width: 768px) {
+        .user-profile-header
+
+    {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .user-avatar {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .info-item {
+        flex-direction: column;
+    }
+
+    .info-label {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .user-profile-container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .profile-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .back-btn, .edit-profile-btn {
+        width: 100%;
+    }
+
+   
+    }
+</style>
+
+<div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+    <div class="nano">
+        <div class="nano-content">
+            <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+            <ul>
+                <li class="label">MENÚ PRINCIPAL</li>
+                <li class="">
+                    <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                    <ul>
+                        <li><a href="@Url.Action("DesayunosDestacados","Categorias")">Los más Destacadas</a></li>
+                        <li><a href="@Url.Action("DesayunosRecientes","Categorias")">Añadidos Recientemente</a></li>
+                    </ul>
+                </li>
+                <li class="">
+                    <a class="sidebar-sub-toggle">Entradas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                    <ul>
+                        <li><a href="@Url.Action("EntradasDestacados","Categorias")">Las más Destacadas</a></li>
+                        <li><a href="@Url.Action("EntradasRecientes","Categorias")">Añadidas Recientemente</a></li>
+                    </ul>
+                </li>
+                <li class="">
+                <li class="">
+                    <a class="sidebar-sub-toggle">Platos Fuertes <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                    <ul>
+                        <li><a href="@Url.Action("PlatosFuertesDestacados","Categorias")">Los más Destacados</a></li>
+                        <li><a href="@Url.Action("PlatosFuertesRecientes","Categorias")">Añadidos Recientemente</a></li>
+                    </ul>
+                </li>
+                <li class="">
+                    <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                    <ul>
+                        <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
+                        <li><a href="@Url.Action("PostresDestacados", "Categorias")">Añadidos Recientemente</a></li>
+                    </ul>
+                </li>
+                <li class="">
+                    <a class="sidebar-sub-toggle">Mis Recetas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                    <ul>
+                        <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
+                        <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
+                        <li><a href="@Url.Action("ConsultarComentario","MisRecetas")">Comentarios</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrap">
+    <div class="main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="main-header">Perfil de Usuario</h2>
+
+                    <!-- Perfil del usuario mejorado -->
+                    @if (Model != null)
+                    {
+                        <div class="user-profile-container">
+                            <div class="user-profile-header">
+                                <div class="user-avatar">
+                                    @(Model.Nombre != null ? Model.Nombre.Substring(0, 1).ToUpper() : "U")
+                                </div>
+                                <div class="user-title">
+                                    <h2>@Model.Nombre</h2>
+                                    <p>@ViewBag.Rol</p>
+                                </div>
+                            </div>
+
+                            <div class="user-info-section">
+                                <h3>Información Personal</h3>
+                                <div class="info-item">
+                                    <div class="info-label">Nombre:</div>
+                                    <div class="info-value">@Model.Nombre</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Email:</div>
+                                    <div class="info-value">@Model.Email</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Rol:</div>
+                                    <div class="info-value">@ViewBag.Rol</div>
+                                </div>
+                                <!-- Puedes agregar más campos si tienes disponibles en tu modelo -->
+                            </div>
+
+                            <div class="profile-buttons">
+                                <a href="@Url.Action("Principal", "Login")" class="back-btn">
+                                    <i class="fa fa-arrow-left"></i> Regresar
+                                </a>
+                                <a href="@Url.Action("EditarPerfil", "Usuario")" class="edit-profile-btn">
+                                    <i class="fa fa-edit"></i> Editar Perfil
+                                </a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-circle"></i> No se pudo cargar la información del usuario.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/lib/jquery.min.js"></script>
+<script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
+<script src="~/assets/js/lib/menubar/sidebar.js"></script>
+<script src="~/assets/js/lib/bootstrap.min.js"></script>
+<script src="~/assets/js/scripts.js"></script>
+
+<!-- Script para asegurar que el sidebar funcione correctamente en dispositivos móviles -->
+<script>
+    $(document).ready(function() {
+        // Toggle para sidebar en móviles
+        $('.hamburger.sidebar-toggle').on('click', function() {
+            $('body').toggleClass('sidebar-open');
+        });
+
+        // Cerrar sidebar al hacer clic fuera en dispositivos móviles
+        $(document).on('click', function(e) {
+            if ($(window).width() <= 767) {
+                if (!$(e.target).closest('.sidebar, .hamburger.sidebar-toggle').length) {
+                    $('body').removeClass('sidebar-open');
+                }
+            }
+        });
+
+        // Ajuste al cambiar tamaño de ventana
+        $(window).resize(function() {
+            if ($(window).width() > 767) {
+                $('body').removeClass('sidebar-open');
+            }
+        });
+    });
+</script>

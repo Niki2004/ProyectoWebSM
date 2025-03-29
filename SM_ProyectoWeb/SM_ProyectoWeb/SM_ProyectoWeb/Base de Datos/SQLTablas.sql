@@ -1,5 +1,6 @@
 CREATE DATABASE ProyectoWebAvanzada
 
+Use ProyectoWebAvanzada;
 ------------------------  TABLAS  ----------------------
 CREATE TABLE Estado (
     Id_Estado bigint IDENTITY(1,1) PRIMARY KEY Not null,
