@@ -7,7 +7,7 @@ using System.Data;
 
 namespace SM_ProyectoApi.Controllers
 {
-    //[Authorize] quitarlo despues para hacer login 
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MisRecetasController : Controller
@@ -19,7 +19,6 @@ namespace SM_ProyectoApi.Controllers
         {
             _configuration = configuration;
         }
-
 
         [HttpPost]
         [Route("RegistrarReceta")]
@@ -140,7 +139,6 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
-
         [HttpPut]
         [Route("ModificarComentario/{id}")]
         public IActionResult ModificarComentario(long id, ComentarioModel model)
@@ -232,11 +230,6 @@ namespace SM_ProyectoApi.Controllers
 
         }
 
-
-
-
-        ///------------------------------------Mostrar todas las recetas que existen ------------------
-
         [HttpGet]
         [Route("ConsultarRecetas")]
         public IActionResult ConsultarRecetas()
@@ -263,10 +256,6 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
-
-        ///------------------------------------Evaluación de las recetas  ------------------
-
-
         [HttpPost]
         [Route("RegistrarValoracion")]
         public IActionResult RegistrarValoracion(ValoracionModel model)
@@ -274,7 +263,7 @@ namespace SM_ProyectoApi.Controllers
             using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
             {
                 var result = context.Execute("RegistrarValoracion",
-                    new { model.Id_Usuario,model.Id_Receta, model.Puntuacion });
+                   new { model.Id_Usuario,model.Id_Receta, model.Puntuacion });
 
                 var respuesta = new RespuestaModel();
 
