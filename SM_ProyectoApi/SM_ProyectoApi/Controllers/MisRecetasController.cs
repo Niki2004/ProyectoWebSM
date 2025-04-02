@@ -7,7 +7,7 @@ using System.Data;
 
 namespace SM_ProyectoApi.Controllers
 {
-    [Authorize]
+    //[Authorize] quitarlo despues para hacer login 
     [Route("api/[controller]")]
     [ApiController]
     public class MisRecetasController : Controller
@@ -20,6 +20,7 @@ namespace SM_ProyectoApi.Controllers
             _configuration = configuration;
         }
 
+
         [HttpPost]
         [Route("RegistrarReceta")]
         public IActionResult RegistrarReceta(RecetaModel model)
@@ -27,7 +28,7 @@ namespace SM_ProyectoApi.Controllers
             using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
             {
                 var result = context.Execute("RegistrarReceta",
-                    new {model.Id_Categoria, model.Titulo, model.Descripcion, model.PlatoReciente, model.PlatoDestacada, model.Ingrediente, model.Imagen });
+                    new { model.Id_Categoria, model.Titulo, model.Descripcion, model.PlatoReciente, model.PlatoDestacada, model.Ingrediente, model.Imagen });
 
                 var respuesta = new RespuestaModel();
 
@@ -89,7 +90,7 @@ namespace SM_ProyectoApi.Controllers
             {
                 using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
                 {
-                    
+
                     var result = context.Execute("EliminarReceta", new { Id_Receta = idReceta });
 
                     if (result > 0)
@@ -120,7 +121,7 @@ namespace SM_ProyectoApi.Controllers
             using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
             {
                 var result = context.Execute("RegistrarComentario",
-                    new { model.Id_Usuario, model.Id_Receta, model.Contenido});
+                    new { model.Id_Usuario, model.Id_Receta, model.Contenido });
 
                 var respuesta = new RespuestaModel();
 
@@ -138,6 +139,7 @@ namespace SM_ProyectoApi.Controllers
                 return Ok(respuesta);
             }
         }
+
 
         [HttpPut]
         [Route("ModificarComentario/{id}")]
@@ -230,6 +232,11 @@ namespace SM_ProyectoApi.Controllers
 
         }
 
+
+
+
+        ///------------------------------------Mostrar todas las recetas que existen ------------------
+
         [HttpGet]
         [Route("ConsultarRecetas")]
         public IActionResult ConsultarRecetas()
@@ -255,6 +262,38 @@ namespace SM_ProyectoApi.Controllers
                 return Ok(respuesta);
             }
         }
+
+
+        ///------------------------------------Evaluación de las recetas  ------------------
+
+
+        [HttpPost]
+        [Route("RegistrarValoracion")]
+        public IActionResult RegistrarValoracion(ValoracionModel model)
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var result = context.Execute("RegistrarValoracion",
+                    new { model.Id_Usuario,model.Id_Receta, model.Puntuacion });
+
+                var respuesta = new RespuestaModel();
+
+                if (result > 0)
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Valoración registrada exitosamente.";
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "Error al registrar la valoración.";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+
     }
 }
 
