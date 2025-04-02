@@ -356,3 +356,23 @@ BEGIN
         U.Id_Rol = @Id_Role;
 END;
 GO
+
+------evaluaciones----
+CREATE PROCEDURE [dbo].[RegistrarValoracion]
+    @Id_Usuario BIGINT,
+    @Id_Receta BIGINT,
+    @Puntuacion INT
+AS
+BEGIN
+    -- Verificar si ya existe una valoración para el mismo usuario y receta
+    IF EXISTS (SELECT 1 FROM Valoracion WHERE Id_Usuario = @Id_Usuario AND Id_Receta = @Id_Receta)
+    BEGIN
+        RAISERROR('El usuario ya ha valorado esta receta.', 16, 1);
+        RETURN;
+    END
+
+    -- Insertar la nueva valoración
+    INSERT INTO dbo.Valoracion (Id_Usuario, Id_Receta, Puntuacion)
+    VALUES (@Id_Usuario, @Id_Receta, @Puntuacion);
+END
+GO
