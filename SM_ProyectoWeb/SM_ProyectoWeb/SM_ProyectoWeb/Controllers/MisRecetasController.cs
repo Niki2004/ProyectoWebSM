@@ -635,11 +635,6 @@ namespace SM_ProyectoWeb.Controllers
             return RedirectToAction("ConsultarComentario", "MisRecetas");
         }
 
-
-
-
-        //////-------------Evaluaciones---------------///
-
         [HttpGet]
         public IActionResult RegistrarValoracion()
         {
