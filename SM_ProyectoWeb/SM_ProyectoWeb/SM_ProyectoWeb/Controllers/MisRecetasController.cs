@@ -634,5 +634,141 @@ namespace SM_ProyectoWeb.Controllers
 
             return RedirectToAction("ConsultarComentario", "MisRecetas");
         }
+
+
+
+
+        //////-------------Evaluaciones---------------///
+
+        [HttpGet]
+        public IActionResult RegistrarValoracion()
+        {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                return RedirectToAction("IniciarSesion", "Login");
+            }
+            CargarRecetasCombo();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult RegistrarValoracion(ValoracionModel model)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    TempData["Error"] = "No hay sesión activa. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                var idUsuarioStr = HttpContext.Session.GetString("Id_Usuario");
+                if (string.IsNullOrEmpty(idUsuarioStr) || !long.TryParse(idUsuarioStr, out long idUsuario))
+                {
+                    TempData["Error"] = "ID de usuario no válido. Inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                model.Id_Usuario = idUsuario;
+
+                if (!ModelState.IsValid)
+                {
+                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        TempData["Error"] = error.ErrorMessage;
+                    }
+                    return View(model);
+                }
+
+                Console.WriteLine($"Registrando valoración - Usuario: {model.Id_Usuario}, Receta: {model.Id_Receta}, Puntuación: {model.Puntuacion}");
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarValoracion";
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+
+                    var result = api.PostAsJsonAsync(url, model).Result;
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}, Contenido: {responseContent}");
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (response?.Indicador == true)
+                        {
+                            TempData["Mensaje"] = "Valoración registrada exitosamente.";
+                            return RedirectToAction("ConsultarValoraciones", "MisRecetas");
+                        }
+                        else
+                        {
+                            TempData["Error"] = response?.Mensaje ?? "Error al registrar la valoración.";
+                        }
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Error de comunicación con el servidor. Intente nuevamente.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al registrar valoración: {ex.Message}\n{ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Intente nuevamente.";
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ConsultarValoraciones()
+        {
+            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
+            try
+            {
+                var idUsuarioStr = HttpContext.Session.GetString("Id_Usuario");
+                if (string.IsNullOrEmpty(idUsuarioStr) || !long.TryParse(idUsuarioStr, out long idUsuario))
+                {
+                    TempData["Error"] = "ID de usuario no válido. Inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = $"{_configuration.GetSection("Variables:urlApi").Value}MisRecetas/ConsultarValoraciones?idUsuario={idUsuario}";
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var response = api.GetAsync(url).Result;
+                    var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (result?.Indicador == true)
+                        {
+                            var valoraciones = JsonSerializer.Deserialize<List<ValoracionModel>>((JsonElement)result.Datos!);
+                            return View(valoraciones ?? new List<ValoracionModel>());
+                        }
+                        else
+                        {
+                            TempData["Error"] = result?.Mensaje ?? "Error al consultar las valoraciones";
+                        }
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al consultar valoraciones: {ex.Message}\n{ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
+            }
+
+            return View(new List<ValoracionModel>());
+        }
+
     }
 }

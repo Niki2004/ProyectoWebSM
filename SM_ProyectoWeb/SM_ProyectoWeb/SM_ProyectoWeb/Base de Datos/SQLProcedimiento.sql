@@ -364,15 +364,37 @@ CREATE PROCEDURE [dbo].[RegistrarValoracion]
     @Puntuacion INT
 AS
 BEGIN
-    -- Verificar si ya existe una valoración para el mismo usuario y receta
+    -- Verificar si ya existe una valoraciÃ³n para el mismo usuario y receta
     IF EXISTS (SELECT 1 FROM Valoracion WHERE Id_Usuario = @Id_Usuario AND Id_Receta = @Id_Receta)
     BEGIN
         RAISERROR('El usuario ya ha valorado esta receta.', 16, 1);
         RETURN;
     END
 
-    -- Insertar la nueva valoración
+    -- Insertar la nueva valoraciÃ³n
     INSERT INTO dbo.Valoracion (Id_Usuario, Id_Receta, Puntuacion)
     VALUES (@Id_Usuario, @Id_Receta, @Puntuacion);
+END
+GO
+
+CREATE PROCEDURE [dbo].[ConsultarValoraciones]
+    @Id_Usuario BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        V.Id_Valoracion,
+        V.Id_Usuario,
+        V.Id_Receta,
+        V.Puntuacion,
+        R.Titulo as Nombre_Receta
+    FROM 
+        Valoracion V
+        INNER JOIN Receta R ON V.Id_Receta = R.Id_Receta
+    WHERE 
+        V.Id_Usuario = @Id_Usuario
+    ORDER BY 
+        V.Id_Valoracion DESC;
 END
 GO
