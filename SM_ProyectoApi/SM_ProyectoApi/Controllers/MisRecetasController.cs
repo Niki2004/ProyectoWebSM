@@ -282,8 +282,32 @@ namespace SM_ProyectoApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ConsultarValoraciones/{idUsuario}")]
+        public IActionResult ConsultarValoraciones(long idUsuario)
+        {
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var valoraciones = context.Query<ValoracionModel>("ConsultarValoraciones",
+                    new { Id_Usuario = idUsuario });
 
+                var respuesta = new RespuestaModel();
 
+                if (valoraciones != null && valoraciones.Any())
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Valoraciones obtenidas correctamente";
+                    respuesta.Datos = valoraciones;
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "No se encontraron valoraciones para este usuario";
+                }
+
+                return Ok(respuesta);
+            }
+        }
 
     }
 }

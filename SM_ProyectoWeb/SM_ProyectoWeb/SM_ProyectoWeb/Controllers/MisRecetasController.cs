@@ -314,33 +314,65 @@ namespace SM_ProyectoWeb.Controllers
 
         private void CargarRecetasCombo()
         {
-            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
-            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
-            using (var api = _httpClient.CreateClient())
+            try
             {
-                var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetas";
-                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                var response = api.GetAsync(url).Result;
-
-                if (response.IsSuccessStatusCode)
+                ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+                ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
+                
+                using (var api = _httpClient.CreateClient())
                 {
-                    var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
-                    if (result != null && result.Indicador)
+                    var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/ConsultarRecetas";
+                    Console.WriteLine($"URL para cargar recetas: {url}");
+                    
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var response = api.GetAsync(url).Result;
+
+                    Console.WriteLine($"Código de respuesta al cargar recetas: {response.StatusCode}");
+                    var responseContent = response.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        var recetas = JsonSerializer.Deserialize<List<RecetaModel>>((JsonElement)result.Datos!);
-                        var recetasSelect = new List<SelectListItem>
+                        var result = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (result != null && result.Indicador)
                         {
-                            new SelectListItem { Value = "", Text = "-- Seleccione --" }
-                        };
+                            var recetas = JsonSerializer.Deserialize<List<RecetaModel>>((JsonElement)result.Datos!);
+                            var recetasSelect = new List<SelectListItem>
+                            {
+                                new SelectListItem { Value = "", Text = "-- Seleccione una receta --" }
+                            };
 
-                        foreach (var receta in recetas)
-                        {
-                            recetasSelect.Add(new SelectListItem { Value = receta.Id_Receta.ToString(), Text = receta.Titulo });
+                            foreach (var receta in recetas)
+                            {
+                                recetasSelect.Add(new SelectListItem 
+                                { 
+                                    Value = receta.Id_Receta.ToString(), 
+                                    Text = receta.Titulo 
+                                });
+                                Console.WriteLine($"Receta cargada: ID={receta.Id_Receta}, Título={receta.Titulo}");
+                            }
+
+                            ViewBag.ListaRecetas = recetasSelect;
+                            Console.WriteLine($"Se cargaron {recetasSelect.Count} recetas en el combo");
                         }
-
-                        ViewBag.ListaRecetas = recetasSelect;
+                        else
+                        {
+                            Console.WriteLine($"Error al cargar recetas: {result?.Mensaje}");
+                            ViewBag.ListaRecetas = new List<SelectListItem>();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error al cargar recetas: {responseContent}");
+                        ViewBag.ListaRecetas = new List<SelectListItem>();
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en CargarRecetasCombo: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                ViewBag.ListaRecetas = new List<SelectListItem>();
             }
         }
 
@@ -668,61 +700,208 @@ namespace SM_ProyectoWeb.Controllers
 
                 model.Id_Usuario = idUsuario;
 
-                if (!ModelState.IsValid)
+                if (model.Id_Receta <= 0)
                 {
-                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                    {
-                        TempData["Error"] = error.ErrorMessage;
-                    }
+                    TempData["Error"] = "Debe seleccionar una receta válida.";
+                    CargarRecetasCombo();
                     return View(model);
                 }
 
-                Console.WriteLine($"Registrando valoración - Usuario: {model.Id_Usuario}, Receta: {model.Id_Receta}, Puntuación: {model.Puntuacion}");
+                if (model.Puntuacion < 1 || model.Puntuacion > 5)
+                {
+                    TempData["Error"] = "La puntuación debe estar entre 1 y 5 estrellas.";
+                    CargarRecetasCombo();
+                    return View(model);
+                }
+
+                if (ViewBag.ListaRecetas == null)
+                {
+                    Console.WriteLine("ViewBag.ListaRecetas es null, recargando lista de recetas");
+                    CargarRecetasCombo();
+                }
+
+                string nombreReceta = null;
+                
+                if (ViewBag.ListaRecetas is List<SelectListItem> listaRecetas)
+                {
+                    Console.WriteLine($"Buscando receta con ID {model.Id_Receta} en ViewBag.ListaRecetas");
+                    Console.WriteLine($"Total de recetas en ViewBag: {listaRecetas.Count}");
+                    
+                    foreach (var receta in listaRecetas)
+                    {
+                        Console.WriteLine($"Receta en ViewBag: ID={receta.Value}, Título={receta.Text}");
+                        if (receta.Value == model.Id_Receta.ToString())
+                        {
+                            nombreReceta = receta.Text;
+                            Console.WriteLine($"Nombre de receta encontrado en ViewBag: {nombreReceta}");
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"ViewBag.ListaRecetas no es una List<SelectListItem>, tipo: {ViewBag.ListaRecetas?.GetType()}");
+                }
+
+                if (string.IsNullOrEmpty(nombreReceta))
+                {
+                    Console.WriteLine("No se encontró el nombre en ViewBag, intentando obtener del API");
+                    using (var api = _httpClient.CreateClient())
+                    {
+                        var url = _configuration.GetSection("Variables:urlApi").Value + $"MisRecetas/ConsultarReceta/{model.Id_Receta}";
+                        Console.WriteLine($"URL para obtener nombre de receta: {url}");
+                        
+                        api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                        var response = api.GetAsync(url).Result;
+                        var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                        Console.WriteLine($"Código de respuesta al obtener receta: {response.StatusCode}");
+                        Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var result = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                            if (result != null && result.Indicador)
+                            {
+                                var receta = JsonSerializer.Deserialize<RecetaModel>((JsonElement)result.Datos!);
+                                nombreReceta = receta?.Titulo;
+                                Console.WriteLine($"Nombre de receta obtenido del API: {nombreReceta}");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Error en la respuesta del API: {result?.Mensaje}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Error al obtener receta del API: {responseContent}");
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(nombreReceta))
+                {
+                    Console.WriteLine("No se pudo obtener el nombre de la receta");
+                    TempData["Error"] = "No se pudo obtener el nombre de la receta seleccionada. Por favor, intente nuevamente.";
+                    CargarRecetasCombo();
+                    return View(model);
+                }
+
+                Console.WriteLine($"=== INICIO REGISTRO DE VALORACIÓN ===");
+                Console.WriteLine($"Token: {HttpContext.Session.GetString("Token")}");
+                Console.WriteLine($"Id_Usuario: {model.Id_Usuario}");
+                Console.WriteLine($"Id_Receta: {model.Id_Receta}");
+                Console.WriteLine($"Puntuacion: {model.Puntuacion}");
+                Console.WriteLine($"Nombre_Receta: {nombreReceta}");
 
                 using (var api = _httpClient.CreateClient())
                 {
                     var url = _configuration.GetSection("Variables:urlApi").Value + "MisRecetas/RegistrarValoracion";
+                    Console.WriteLine($"URL del API: {url}");
+
                     api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    
+                    var valoracionData = new
+                    {
+                        Id_Usuario = model.Id_Usuario,
+                        Id_Receta = model.Id_Receta,
+                        Puntuacion = model.Puntuacion,
+                        Nombre_Receta = nombreReceta
+                    };
 
-                    var result = api.PostAsJsonAsync(url, model).Result;
+                    var jsonData = JsonSerializer.Serialize(valoracionData);
+                    Console.WriteLine($"Datos a enviar al API: {jsonData}");
+
+                    Console.WriteLine("\nEnviando datos al API...");
+                    var content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
+                    var result = api.PostAsync(url, content).Result;
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}");
                     var responseContent = result.Content.ReadAsStringAsync().Result;
-
-                    Console.WriteLine($"Código de respuesta: {result.StatusCode}, Contenido: {responseContent}");
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
 
                     if (result.IsSuccessStatusCode)
                     {
                         var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
-                        if (response?.Indicador == true)
+                        if (response != null && response.Indicador)
                         {
-                            TempData["Mensaje"] = "Valoración registrada exitosamente.";
+                            Console.WriteLine("Valoración registrada exitosamente");
+                            TempData["Mensaje"] = "Valoración registrada exitosamente";
                             return RedirectToAction("ConsultarValoraciones", "MisRecetas");
                         }
                         else
                         {
-                            TempData["Error"] = response?.Mensaje ?? "Error al registrar la valoración.";
+                            Console.WriteLine($"Error en la respuesta: {response?.Mensaje}");
+                            TempData["Error"] = response?.Mensaje ?? "Error al registrar la valoración";
                         }
                     }
                     else
                     {
-                        TempData["Error"] = "Error de comunicación con el servidor. Intente nuevamente.";
+                        Console.WriteLine($"Error del API: {responseContent}");
+                        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            try
+                            {
+                                var errorResponse = JsonSerializer.Deserialize<Dictionary<string, object>>(responseContent);
+                                if (errorResponse != null)
+                                {
+                                    if (errorResponse.ContainsKey("errors"))
+                                    {
+                                        var errors = JsonSerializer.Deserialize<Dictionary<string, string[]>>(errorResponse["errors"].ToString());
+                                        if (errors != null && errors.Count > 0)
+                                        {
+                                            var errorMessage = string.Join(" ", errors.Values.SelectMany(e => e));
+                                            TempData["Error"] = errorMessage;
+                                        }
+                                    }
+                                    else if (errorResponse.ContainsKey("title"))
+                                    {
+                                        TempData["Error"] = errorResponse["title"].ToString();
+                                    }
+                                    else if (errorResponse.ContainsKey("detail"))
+                                    {
+                                        TempData["Error"] = errorResponse["detail"].ToString();
+                                    }
+                                    else
+                                    {
+                                        TempData["Error"] = "Error en los datos enviados. Por favor, verifique la información.";
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                TempData["Error"] = "Error en los datos enviados. Por favor, verifique la información.";
+                            }
+                        }
+                        else
+                        {
+                            TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al registrar valoración: {ex.Message}\n{ex.StackTrace}");
-                TempData["Error"] = "Ocurrió un error inesperado. Intente nuevamente.";
+                Console.WriteLine($"Error al registrar valoración: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado. Por favor, intente nuevamente.";
             }
+
+            CargarRecetasCombo();
             return View(model);
         }
 
         [HttpGet]
         public IActionResult ConsultarValoraciones()
         {
-            ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
-            ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
             try
             {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    TempData["Error"] = "No hay sesión activa. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
                 var idUsuarioStr = HttpContext.Session.GetString("Id_Usuario");
                 if (string.IsNullOrEmpty(idUsuarioStr) || !long.TryParse(idUsuarioStr, out long idUsuario))
                 {
@@ -732,10 +911,17 @@ namespace SM_ProyectoWeb.Controllers
 
                 using (var api = _httpClient.CreateClient())
                 {
-                    var url = $"{_configuration.GetSection("Variables:urlApi").Value}MisRecetas/ConsultarValoraciones?idUsuario={idUsuario}";
+                    var url = $"{_configuration.GetSection("Variables:urlApi").Value}MisRecetas/ConsultarValoraciones/{idUsuario}";
                     api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    
+                    Console.WriteLine($"Consultando valoraciones - URL: {url}");
+                    Console.WriteLine($"Token: {HttpContext.Session.GetString("Token")}");
+                    
                     var response = api.GetAsync(url).Result;
                     var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                    Console.WriteLine($"Código de respuesta: {response.StatusCode}");
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -743,6 +929,7 @@ namespace SM_ProyectoWeb.Controllers
                         if (result?.Indicador == true)
                         {
                             var valoraciones = JsonSerializer.Deserialize<List<ValoracionModel>>((JsonElement)result.Datos!);
+                            Console.WriteLine($"Se encontraron {valoraciones?.Count ?? 0} valoraciones");
                             return View(valoraciones ?? new List<ValoracionModel>());
                         }
                         else
@@ -752,6 +939,7 @@ namespace SM_ProyectoWeb.Controllers
                     }
                     else
                     {
+                        Console.WriteLine($"Error del API: {responseContent}");
                         TempData["Error"] = "Error al comunicarse con el servidor. Por favor, intente nuevamente.";
                     }
                 }

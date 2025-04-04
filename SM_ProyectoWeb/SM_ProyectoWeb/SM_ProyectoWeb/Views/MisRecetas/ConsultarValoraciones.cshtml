@@ -1,5 +1,5 @@
 ﻿@using SM_ProyectoWeb.Models
-@model List<ComentarioModel>
+@model List<ValoracionModel>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -275,21 +275,19 @@
         }
 
         .comment-item {
-            border-left: 3px solid #4e73df;
+            background: #f8f9fa;
+            border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            background: #f8f9fa;
-            border-radius: 0 8px 8px 0;
+            border-left: 4px solid #4e73df;
         }
 
         .comment-header {
-            display: flex;
-            justify-content: space-between;
             margin-bottom: 10px;
         }
 
         .comment-author {
-            font-weight: bold;
+            font-weight: 600;
             color: #333;
         }
 
@@ -307,12 +305,17 @@
         }
 
         .star-rating {
-            margin-top: 10px;
+            display: flex;
+            gap: 5px;
         }
 
-        .rating-text {
-            margin-left: 10px;
-            font-weight: bold;
+        .star {
+            font-size: 24px;
+            color: #ccc;
+        }
+
+        .star.active {
+            color: #ffd700;
         }
 
         .comment-tabs {
@@ -465,66 +468,82 @@
 
                 <div class="row page-title">
                     <div class="col-md-12">
-                        <h2>Comentarios de Recetas</h2>
+                        <h2>Valoraciones de Recetas</h2>
                     </div>
                 </div>
 
                 <div class="row">
-                    <!-- Columna principal - Comentarios -->
+                    <!-- Columna principal - Valoraciones -->
                     <div class="col-lg-8 col-md-12">
                         <!-- Tabs de navegación -->
                         <ul class="nav nav-tabs comment-tabs" id="commentTabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="my-comments-tab" data-toggle="tab" href="#my-comments" role="tab" aria-controls="my-comments" aria-selected="true">
-                                    <i class="ti-comment mr-2"></i>Mis Comentarios
+                                <a class="nav-link active" id="my-ratings-tab" data-toggle="tab" href="#my-ratings" role="tab" aria-controls="my-ratings" aria-selected="true">
+                                    <i class="ti-star mr-2"></i>Mis Valoraciones
                                 </a>
                             </li>
                             <li class="nav-item ml-2">
-                                <a class="nav-link active" id="add-comment-tab" href="@Url.Action("RegistrarComentario","MisRecetas")">
-                                    <i class="ti-comment-alt mr-2"></i>Agregar Comentario
+                                <a class="nav-link" id="add-rating-tab" href="@Url.Action("RegistrarValoracion","MisRecetas")">
+                                    <i class="ti-star mr-2"></i>Agregar Valoración
                                 </a>
                             </li>
                         </ul>
 
                         <div class="tab-content">
-                            <div class="tab-pane fade show active" id="my-comments" role="tabpanel" aria-labelledby="my-comments-tab">
+                            <div class="tab-pane fade show active" id="my-ratings" role="tabpanel" aria-labelledby="my-ratings-tab">
                                 <div class="form-section">
                                     <h4 class="form-title">
-                                        <span class="section-icon"><i class="ti-comment"></i></span>
-                                        Comentarios Realizados
+                                        <span class="section-icon"><i class="ti-star"></i></span>
+                                        Valoraciones Realizadas
                                     </h4>
 
-                                    @Html.AntiForgeryToken()
+                                    @if (TempData["Mensaje"] != null)
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            @TempData["Mensaje"]
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    }
 
-                                    <div class="comment-list">
-                                        @foreach (var comentario in Model)
+                                    @if (TempData["Error"] != null)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            @TempData["Error"]
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    }
+
+                                    <div class="comment-section">
+                                        @if (Model != null && Model.Any())
                                         {
-                                            <!-- Comentario dinámico desde el modelo -->
-                                            <div class="comment-item">
-                                                <div class="comment-header">
-                                                    <div class="comment-author">@comentario.Titulo</div>
-                                                    <div class="comment-date">@comentario.Fecha_Comentario.ToString("dd/MM/yyyy")</div>
-                                                </div>
-                                                <div class="comment-body">
-                                                    <p>@comentario.Contenido</p>
-                                                </div>
-                                                <div class="comment-actions mt-2">
-                                                    <a asp-action="ModificarComentario"
-                                                       asp-route-id="@comentario.Id_Comentario"
-                                                       class="btn btn-sm btn-outline-primary mr-2">
-                                                        <i class="ti-pencil"></i> Editar
-                                                    </a>
-                                                    <button class="btn btn-sm btn-outline-danger mr-2" onclick="eliminarComentario(@comentario.Id_Comentario)">
-                                                        <i class="ti-trash"></i> Eliminar
-                                                    </button>
-                                                </div>
+                                            <div class="alert alert-info mb-4">
+                                                <i class="ti-info-alt mr-2"></i>Se encontraron @Model.Count valoraciones
                                             </div>
+                                            foreach (var valoracion in Model)
+                                            {
+                                                <div class="comment-item">
+                                                    <div class="comment-header">
+                                                        <div>
+                                                            <h5 class="mb-2">@valoracion.Nombre_Receta</h5>
+                                                        </div>
+                                                        <div class="star-rating">
+                                                            @for (int i = 1; i <= 5; i++)
+                                                            {
+                                                                <span class="star @(i <= valoracion.Puntuacion ? "active" : "")">★</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
                                         }
-
-                                        @if (!Model.Any())
+                                        else
                                         {
                                             <div class="alert alert-info">
-                                                No has realizado ningún comentario todavía. ¡Anímate a compartir tu opinión sobre las recetas!
+                                                <i class="ti-info-alt mr-2"></i>No has realizado ninguna valoración aún.
                                             </div>
                                         }
                                     </div>
@@ -533,88 +552,18 @@
                         </div>
                     </div>
 
-                    <!-- Columna lateral - Recetas rápidas y consejos -->
+                    <!-- Columna lateral - Consejos -->
                     <div class="col-lg-4 col-md-12">
                         <div class="form-section">
                             <h4 class="form-title">
-                                <i class="ti-timer"></i> Recetas Rápidas
-                            </h4>
-                            <p class="mb-3">Opciones que se preparan en menos de 30 minutos</p>
-
-                            <div class="recipe-selector">
-                                <!-- Lista de recetas rápidas -->
-                                <div class="recipe-item" onclick="selectRecipe(6)">
-                                    <div>
-                                        <p class="recipe-item-name">Huevos Revueltos <span class="time-badge">15 min</span></p>
-                                        <span class="recipe-item-category">Desayunos</span>
-                                    </div>
-                                </div>
-
-                                <div class="recipe-item" onclick="selectRecipe(7)">
-                                    <div>
-                                        <p class="recipe-item-name">Ensalada de Atún <span class="time-badge">10 min</span></p>
-                                        <span class="recipe-item-category">Entradas</span>
-                                    </div>
-                                </div>
-
-                                <div class="recipe-item" onclick="selectRecipe(8)">
-                                    <div>
-                                        <p class="recipe-item-name">Pasta con Pesto <span class="time-badge">20 min</span></p>
-                                        <span class="recipe-item-category">Platos Fuertes</span>
-                                    </div>
-                                </div>
-
-                                <div class="recipe-item" onclick="selectRecipe(9)">
-                                    <div>
-                                        <p class="recipe-item-name">Quesadillas <span class="time-badge">15 min</span></p>
-                                        <span class="recipe-item-category">Platos Fuertes</span>
-                                    </div>
-                                </div>
-
-                                <div class="recipe-item" onclick="selectRecipe(10)">
-                                    <div>
-                                        <p class="recipe-item-name">Smoothie de Frutas <span class="time-badge">5 min</span></p>
-                                        <span class="recipe-item-category">Bebidas</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <h4 class="form-title">
-                                <i class="ti-help-alt"></i> Consejos para comentar
+                                <i class="ti-help-alt"></i> Consejos para valorar
                             </h4>
                             <ul class="list-unstyled">
-                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Sé específico sobre lo que te gustó o no te gustó</li>
-                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Menciona si hiciste alguna modificación a la receta</li>
-                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Comparte tips que puedan ayudar a otros</li>
-                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Mantén un tono constructivo y respetuoso</li>
-                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Indica el nivel de dificultad que encontraste</li>
+                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Sé honesto con tu valoración</li>
+                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Considera el sabor, presentación y facilidad de preparación</li>
+                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Valora la receta en su conjunto</li>
+                                <li class="mb-3"><i class="ti-check text-success mr-2"></i> Tu opinión ayuda a otros usuarios</li>
                             </ul>
-                        </div>
-                    </div>
-
-
-                    <div class="modal fade" id="eliminarComentarioModal" tabindex="-1" role="dialog" aria-labelledby="eliminarComentarioModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="eliminarComentarioModalLabel">
-                                        <i class="ti-trash text-danger mr-2"></i>Eliminar Comentario
-                                    </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    ¿Estás seguro de que deseas eliminar este comentario?
-                                    <p class="text-muted mt-2">Esta acción no se puede deshacer.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                    <button type="button" class="btn btn-danger" id="confirmarEliminarComentario">Eliminar</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
