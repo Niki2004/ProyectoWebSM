@@ -2,43 +2,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-
-<!-- Estilos responsivos -->
-<style>
-    /* Estilos generales responsivos */
-    .recipe-content {
-        width: 100%;
-        padding: 15px;
-    }
-    
-    .recipe-image-container {
-        max-width: 100% !important;
-        margin: 20px auto !important;
-    }
-    
-    .recipe-info {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-    
-    .recipe-info span {
-        display: inline-block;
-        margin-right: 10px;
-    }
-    
-    .related-recipes .row {
-        display: flex;
-        flex-wrap: wrap;
-    }
-    
-    .related-recipes .col-md-4 {
-        flex: 0 0 100%;
-        padding: 10px 0;
-    }
-</style>
+<link href="~/css/principal.css" rel="stylesheet" />
 
 <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
     <div class="nano">
@@ -209,15 +173,12 @@
 <script src="~/assets/js/lib/bootstrap.min.js"></script>
 <script src="~/assets/js/scripts.js"></script>
 
-<!-- Script para asegurar que el sidebar funcione correctamente en dispositivos móviles -->
 <script>
     $(document).ready(function() {
-        // Toggle para sidebar en móviles
         $('.hamburger.sidebar-toggle').on('click', function() {
             $('body').toggleClass('sidebar-open');
         });
         
-        // Cerrar sidebar al hacer clic fuera en dispositivos móviles
         $(document).on('click', function(e) {
             if ($(window).width() <= 767) {
                 if (!$(e.target).closest('.sidebar, .hamburger.sidebar-toggle').length) {
@@ -226,7 +187,6 @@
             }
         });
         
-        // Ajuste al cambiar tamaño de ventana
         $(window).resize(function() {
             if ($(window).width() > 767) {
                 $('body').removeClass('sidebar-open');

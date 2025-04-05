@@ -1,0 +1,32 @@
+
+.recipe-content {
+    width: 100%;
+    padding: 15px;
+}
+
+.recipe-image-container {
+    max-width: 100% !important;
+    margin: 20px auto !important;
+}
+
+.recipe-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+    .recipe-info span {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+.related-recipes .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.related-recipes .col-md-4 {
+    flex: 0 0 100%;
+    padding: 10px 0;
+}
