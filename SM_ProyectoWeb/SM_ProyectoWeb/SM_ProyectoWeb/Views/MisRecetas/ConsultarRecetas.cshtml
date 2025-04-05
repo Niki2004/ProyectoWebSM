@@ -101,66 +101,98 @@
     <div class="content-wrap">
         <div class="main">
             <div class="container-fluid">
-                <!-- Hero Section -->
                 <div class="hero-section">
                     <h1>Descubre el placer de cocinar</h1>
                     <p>Explora cientos de recetas deliciosas y fáciles de preparar</p>
                 </div>
+
+                <div class="container">
+                    <h2 class="text-center my-4">Buscar Recetas</h2>
+
+                    <!-- Formulario de búsqueda -->
+                    <form id="busquedaRecetasForm" class="search-form">
+                        <div class="input-group">
+                            <label for="inputBusqueda" class="sr-only">Buscar receta</label>
+                            <input type="text" id="inputBusqueda" class="form-control search-input" placeholder="Buscar por nombre de receta...">
+                            <div class="input-group-append">
+                                <button class="btn btn-search" type="submit">
+                                    <i class="fas fa-search"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
                 <div class="row">
                     <div class="col-lg-12 p-r-0 title-margin-right">
                         <div class="page-header">
                             <div class="page-title">
                                 <h2 class="text-center">Tus Recetas, tu felicidad</h2>
+                                @if (!string.IsNullOrEmpty(ViewBag.TerminoBusqueda) || !string.IsNullOrEmpty(ViewBag.CategoriaSeleccionada))
+                                {
+                                    <h4 class="text-center search-results-title">
+                                        Resultados de búsqueda: 
+                                        @if (!string.IsNullOrEmpty(ViewBag.TerminoBusqueda)) { <span>"@ViewBag.TerminoBusqueda"</span> }
+                                        @if (!string.IsNullOrEmpty(ViewBag.CategoriaSeleccionada)) { <span>en @ViewBag.CategoriaSeleccionada</span> }
+                                    </h4>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    @foreach (var receta in Model)
+                    <div id="contenedor-recetas" class="row">
+                    @if (Model != null && Model.Any())
                     {
-                        <div class="col-lg-4 col-md-6">
-                            <div class="recipe-card">
-
-                                <div class="recipe-image">
-                                    @if (!string.IsNullOrEmpty(receta.Imagen))
-                                    {
-                                        <img src="@receta.Imagen" 
-                                             alt="@receta.Titulo" 
-                                             onerror="console.error('Error al cargar la imagen:', this.src); this.src='/img/default-recipe.jpg';"
-                                             style="width: 100%; height: 100%; object-fit: cover;"
-                                             onload="console.log('Imagen cargada exitosamente:', this.src)">
-                                    }
-                                    else
-                                    {
-                                        <img src="/img/default-recipe.jpg" alt="@receta.Titulo" style="width: 100%; height: 100%; object-fit: cover;">
-                                    }
-                                    @if (receta.PlatoDestacada)
-                                    {
-                                        <div class="recipe-badge">Destacado</div>
-                                    }
-                                </div>
-
-                                <div class="recipe-content">
-                                    <h4 class="recipe-title">@receta.Titulo</h4>
-                                    <div class="ingredients-section">
-                                        
-                                    Ingredientes:
-                                        <ul class="recipe-ingredients">
-                                            @foreach (var ingrediente in receta.Ingrediente.Split(','))
-                                            {
-                                                <li class="ingredient-item">@ingrediente.Trim()</li>
-                                            }
-                                        </ul>
+                        foreach (var receta in Model)
+                        {
+                            <div class="col-lg-4 col-md-6">
+                                    <div class="recipe-card" data-titulo="@receta.Titulo.ToLower()">
+                                    <div class="recipe-image">
+                                        @if (!string.IsNullOrEmpty(receta.Imagen))
+                                        {
+                                            <img src="@receta.Imagen" 
+                                                alt="@receta.Titulo" 
+                                                onerror="console.error('Error al cargar la imagen:', this.src); this.src='/img/default-recipe.jpg';"
+                                                style="width: 100%; height: 100%; object-fit: cover;"
+                                                onload="console.log('Imagen cargada exitosamente:', this.src)">
+                                        }
+                                        else
+                                        {
+                                            <img src="/img/default-recipe.jpg" alt="@receta.Titulo" style="width: 100%; height: 100%; object-fit: cover;">
+                                        }
+                                        @if (receta.PlatoDestacada)
+                                        {
+                                            <div class="recipe-badge">Destacado</div>
+                                        }
                                     </div>
-                                   Preparación:
-                                    <p class="recipe-description">@receta.Descripcion</p>
-                                    <div class="recipe-meta">
-                                        <span class="recipe-category">@receta.Nombre_Categoria</span>
-                                        <span>@receta.Fecha_Publicacion.ToString("dddd, dd MMMM yyyy")</span>
+
+                                    <div class="recipe-content">
+                                        <h4 class="recipe-title">@receta.Titulo</h4>
+                                        <div class="ingredients-section">
+                                            Ingredientes:
+                                            <ul class="recipe-ingredients">
+                                                @foreach (var ingrediente in receta.Ingrediente.Split(','))
+                                                {
+                                                    <li class="ingredient-item">@ingrediente.Trim()</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                        Preparación:
+                                        <p class="recipe-description">@receta.Descripcion</p>
+                                        <div class="recipe-meta">
+                                            <span class="recipe-category">@receta.Nombre_Categoria</span>
+                                            <span>@receta.Fecha_Publicacion.ToString("dddd, dd MMMM yyyy")</span>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                No se encontraron recetas que coincidan con tu búsqueda.
                             </div>
                         </div>
                     }
@@ -174,16 +206,82 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="footer">
-                <p>© Las Recetas de la Felicidad</p>
+                <p class="text-center">© Las Recetas de la Felicidad</p>
             </div>
         </div>
     </div>
 
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script src="~/assets/js/lib/jquery.min.js"></script>
     <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
     <script src="~/assets/js/lib/menubar/sidebar.js"></script>
     <script src="~/assets/js/lib/bootstrap.min.js"></script>
     <script src="~/assets/js/scripts.js"></script>
-                
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const inputBusqueda = document.getElementById("inputBusqueda");
+                const contenedorRecetas = document.getElementById("contenedor-recetas");
+                const tarjetasRecetas = document.querySelectorAll(".recipe-card");
+
+                inputBusqueda.addEventListener("keyup", function () {
+                    const termino = inputBusqueda.value.toLowerCase();
+                    let hayResultados = false;
+
+                    // Array para almacenar todas las tarjetas visibles
+                    const tarjetasVisibles = [];
+                    const tarjetasOcultas = [];
+
+                    // Primero determinamos qué tarjetas deben ser visibles
+                    tarjetasRecetas.forEach(function (tarjeta) {
+                        const titulo = tarjeta.getAttribute("data-titulo");
+
+                        if (titulo.includes(termino)) {
+                            tarjetasVisibles.push(tarjeta);
+                            hayResultados = true;
+                        } else {
+                            tarjetasOcultas.push(tarjeta);
+                        }
+                    });
+
+                    // Reorganizamos el contenedor
+                    if (hayResultados) {
+                        // Primero ocultamos todas
+                        tarjetasOcultas.forEach(tarjeta => {
+                            tarjeta.closest('.col-lg-4').style.display = "none";
+                        });
+
+                        // Luego mostramos las que coinciden con la búsqueda
+                        tarjetasVisibles.forEach(tarjeta => {
+                            tarjeta.closest('.col-lg-4').style.display = "block";
+                        });
+
+                        // Eliminamos mensaje si existe
+                        const mensaje = document.getElementById("mensajeSinResultados");
+                        if (mensaje) mensaje.remove();
+                    } else {
+                        // Ocultamos todas las tarjetas
+                        tarjetasRecetas.forEach(function (tarjeta) {
+                            tarjeta.closest('.col-lg-4').style.display = "none";
+                        });
+
+                        // Mostramos mensaje de no resultados
+                        let mensaje = document.getElementById("mensajeSinResultados");
+                        if (!mensaje) {
+                            const nuevoMensaje = document.createElement("div");
+                            nuevoMensaje.id = "mensajeSinResultados";
+                            nuevoMensaje.className = "alert alert-info text-center w-100";
+                            nuevoMensaje.textContent = "No se encontraron recetas que coincidan con tu búsqueda.";
+                            contenedorRecetas.appendChild(nuevoMensaje);
+                        }
+                    }
+                });
+
+                // Evitar que el formulario se envíe
+                const form = document.getElementById("busquedaRecetasForm");
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                });
+            });
+        </script>
 </body>
 </html>
