@@ -65,7 +65,7 @@ namespace SM_ProyectoApi.Controllers
 
                 if (result != null)
                 {
-                    result.Token = GenerarToken(result.Id_Usuario);
+                    result.Token = GenerarToken(result.Id_Usuario, result.Id_Rol);
                     respuesta.Indicador = true;
                     respuesta.Mensaje = "Su información se ha validado correctamente";
                     respuesta.Datos = result;
@@ -94,7 +94,7 @@ namespace SM_ProyectoApi.Controllers
 
                 if (result != null)
                 {
-                    result.Token = GenerarToken(result.Id_Usuario);
+                    result.Token = GenerarToken(result.Id_Usuario, result.Id_Rol);
                     respuesta.Indicador = true;
                     respuesta.Mensaje = "Su información se ha validado correctamente";
                     respuesta.Datos = result;
@@ -139,12 +139,13 @@ namespace SM_ProyectoApi.Controllers
             }
         }
     
-        private string GenerarToken(long Id_Usuario)
+        private string GenerarToken(long Id_Usuario, long Id_Perfil)
         {
             string SecretKey = _configuration.GetSection("Variables:llaveToken").Value!;
 
             List<Claim> claims = new List<Claim>();
             claims.Add(new Claim("Id_Usuario", Id_Usuario.ToString()));
+            claims.Add(new Claim("Id_Perfil", Id_Perfil.ToString()));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);

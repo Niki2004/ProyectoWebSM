@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using SM_ProyectoApi.Dependencias;
 using SM_ProyectoApi.Models;
 using System.Data;
 
@@ -14,10 +15,12 @@ namespace SM_ProyectoApi.Controllers
     {
 
         private readonly IConfiguration _configuration;
+        private readonly IUtilitarios _utilitarios;
 
-        public MisRecetasController(IConfiguration configuration)
+        public MisRecetasController(IConfiguration configuration, IUtilitarios utilitarios)
         {
             _configuration = configuration;
+            _utilitarios = utilitarios;
         }
 
         [HttpPost]
@@ -307,6 +310,38 @@ namespace SM_ProyectoApi.Controllers
 
                 return Ok(respuesta);
             }
+        }
+
+        [HttpGet]
+        [Route("ConsultarComentarioAdmin")]
+        public IActionResult ConsultarComentarioAdmin(long Id_Comentario)
+        {
+            var respuesta = new RespuestaModel();
+
+            //Esto es para que no pueda acceder un usuario a la vista
+            //if (_utilitarios.ValidarUsuarioAdministradorFromToken(User.Claims))
+            //{
+            //    respuesta.Indicador = true;
+            //    respuesta.Mensaje = "No tiene permisos para acceder a esta información";
+            //    return Ok(respuesta);
+            //}
+            return View();
+        }
+
+        [HttpGet]
+        [Route("EliminarComentarioAdmin")]
+        public IActionResult EliminarComentarioAdmin()
+        {
+            var respuesta = new RespuestaModel();
+
+            if (_utilitarios.ValidarUsuarioAdministradorFromToken(User.Claims))
+            {
+                respuesta.Indicador = true;
+                respuesta.Mensaje = "No tiene permisos para acceder a esta información";
+                return Ok(respuesta);
+            }
+
+            return View();
         }
 
     }

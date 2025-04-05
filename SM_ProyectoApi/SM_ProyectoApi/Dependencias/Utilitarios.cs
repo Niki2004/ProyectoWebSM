@@ -14,7 +14,16 @@ namespace SM_ProyectoApi.Dependencias
 
             return 0;
         }
+        
+        public bool ValidarUsuarioAdministradorFromToken(IEnumerable<Claim> valores)
+        {
+            if (valores.Any())
+            {
+                var Id_Perfil = valores.FirstOrDefault(x => x.Type == "Id_Perfil")?.Value;
+                return Id_Perfil == "2";
+            }
 
-      
+            return false;
+        }
     }
 }
