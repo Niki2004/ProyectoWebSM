@@ -22,6 +22,24 @@
                 <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
                 <ul>
                     <li class="label">MENÚ PRINCIPAL</li>
+                    @if (Context.Session.GetString("Id_Rol") != null && Context.Session.GetString("Id_Rol") == "2")
+                    {
+                        <li class="">
+                            <a class="sidebar-sub-toggle">Registros<span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                            <ul>
+                                <li><a href="@Url.Action("","")">Usuarios</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="">
+                            <a class="sidebar-sub-toggle">Información<span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                            <ul>
+                                <li><a href="@Url.Action("","")">Comentarios</a></li>
+                                <li><a href="@Url.Action("","")">Eliminar comentarios</a></li>
+                            </ul>
+                        </li>
+                    }
+
                     <li class="">
                         <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
                         <ul>

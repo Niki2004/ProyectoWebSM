@@ -145,7 +145,6 @@ namespace SM_ProyectoApi.Controllers
 
             List<Claim> claims = new List<Claim>();
             claims.Add(new Claim("Id_Usuario", Id_Usuario.ToString()));
-            
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);

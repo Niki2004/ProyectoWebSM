@@ -62,6 +62,7 @@ namespace SM_ProyectoWeb.Controllers
                                         HttpContext!.Session.SetString("Token", datosResult2.Token!);
                                         HttpContext!.Session.SetString("Id_Usuario", datosResult2.Id_Usuario.ToString());
                                         HttpContext!.Session.SetString("Nombre", datosResult2.Nombre ?? "");
+                                        HttpContext!.Session.SetString("Id_Rol", datosResult2.Id_Rol.ToString());
 
                                         Debug.WriteLine($"Nombre User: {datosResult2.Nombre}");
                                     }
