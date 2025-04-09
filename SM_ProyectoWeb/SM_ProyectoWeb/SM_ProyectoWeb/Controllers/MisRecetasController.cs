@@ -667,6 +667,61 @@ namespace SM_ProyectoWeb.Controllers
             return RedirectToAction("ConsultarComentario", "MisRecetas");
         }
 
+        [HttpDelete]
+        public IActionResult EliminarReceta(long id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    return Json(new { success = false, message = "No hay sesión activa. Por favor, inicie sesión nuevamente." });
+                }
+
+                Console.WriteLine($"\n=== INICIO ELIMINACIÓN DE RECETA ===");
+                Console.WriteLine($"Token: {HttpContext.Session.GetString("Token")}");
+                Console.WriteLine($"Id_Receta: {id}");
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + $"MisRecetas/EliminarReceta/{id}";
+                    Console.WriteLine($"URL del API: {url}");
+
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var result = api.DeleteAsync(url).Result;
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}");
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (response != null && response.Indicador)
+                        {
+                            Console.WriteLine("Receta eliminada exitosamente");
+                            return Json(new { success = true, message = "Receta eliminada exitosamente" });
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Error en la respuesta: {response?.Mensaje}");
+                            return Json(new { success = false, message = response?.Mensaje ?? "Error al eliminar la receta" });
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error del API: {responseContent}");
+                        return Json(new { success = false, message = "Error al comunicarse con el servidor. Por favor, intente nuevamente." });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar receta: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return Json(new { success = false, message = "Ocurrió un error inesperado. Por favor, intente nuevamente." });
+            }
+        }
+
         [HttpGet]
         public IActionResult RegistrarValoracion()
         {
