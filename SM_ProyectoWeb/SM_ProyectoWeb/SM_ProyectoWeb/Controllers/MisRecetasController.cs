@@ -4,6 +4,8 @@ using SM_ProyectoWeb.Dependencias;
 using SM_ProyectoWeb.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text;
 
 namespace SM_ProyectoWeb.Controllers
 {
@@ -1008,9 +1010,154 @@ namespace SM_ProyectoWeb.Controllers
             return View(new List<ValoracionModel>());
         }
 
+        [HttpGet]
+        public IActionResult ModificarReceta(long id)
+        {
+            try
+            {
+                ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+                ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
 
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
 
+                // Obtener la receta del modelo actual
+                var receta = new RecetaModel
+                {
+                    Id_Receta = id,
+                    // Aquí puedes agregar otros campos si los necesitas
+                };
 
+                return View(receta);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cargar la receta: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado";
+                return RedirectToAction("ConsultarRecetas");
+            }
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> ModificarReceta(long id, RecetaModel model)
+        {
+            try
+            {
+                ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+                ViewBag.IdUsuario = HttpContext.Session.GetString("Id_Usuario");
+
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    TempData["Error"] = "No hay sesión activa. Por favor, inicie sesión nuevamente.";
+                    return RedirectToAction("IniciarSesion", "Login");
+                }
+
+                // Validaciones
+                if (model.Id_Categoria <= 0)
+                {
+                    TempData["Error"] = "Debe seleccionar una categoría válida";
+                    return View(model);
+                }
+
+                if (string.IsNullOrEmpty(model.Titulo))
+                {
+                    TempData["Error"] = "El título es obligatorio";
+                    return View(model);
+                }
+
+                if (string.IsNullOrEmpty(model.Descripcion))
+                {
+                    TempData["Error"] = "La descripción es obligatoria";
+                    return View(model);
+                }
+
+                if (string.IsNullOrEmpty(model.Ingrediente))
+                {
+                    TempData["Error"] = "Debe agregar al menos un ingrediente";
+                    return View(model);
+                }
+
+                // Procesar la imagen si se proporciona una nueva
+                if (Request.Form.Files.Count > 0)
+                {
+                    var file = Request.Form.Files[0];
+                    if (file != null && file.Length > 0)
+                    {
+                        if (!file.ContentType.StartsWith("image/"))
+                        {
+                            TempData["Error"] = "El archivo debe ser una imagen válida";
+                            return View(model);
+                        }
+
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+
+                        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        model.Imagen = $"/uploads/{uniqueFileName}";
+                    }
+                }
+
+                // Procesar los ingredientes
+                var ingredientes = Request.Form["Ingrediente"].ToList();
+                model.Ingrediente = string.Join(", ", ingredientes.Where(i => !string.IsNullOrEmpty(i)));
+
+                // Procesar los checkboxes
+                model.PlatoReciente = Request.Form.ContainsKey("PlatoReciente");
+                model.PlatoDestacada = Request.Form.ContainsKey("PlatoDestacada");
+
+                using (var api = _httpClient.CreateClient())
+                {
+                    var url = _configuration.GetSection("Variables:urlApi").Value + $"MisRecetas/ModificarReceta/{id}";
+                    Console.WriteLine($"URL para modificar receta: {url}");
+                    
+                    api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+
+                    var result = await api.PutAsJsonAsync(url, model);
+                    var responseContent = await result.Content.ReadAsStringAsync();
+
+                    Console.WriteLine($"Código de respuesta: {result.StatusCode}");
+                    Console.WriteLine($"Contenido de la respuesta: {responseContent}");
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = JsonSerializer.Deserialize<RespuestaModel>(responseContent);
+                        if (response != null && response.Indicador)
+                        {
+                            TempData["Mensaje"] = "Receta modificada exitosamente";
+                            return RedirectToAction("ConsultarRecetas", "MisRecetas");
+                        }
+                        else
+                        {
+                            TempData["Error"] = response?.Mensaje ?? "Error al modificar la receta";
+                        }
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Error al comunicarse con el servidor";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al modificar receta: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = "Ocurrió un error inesperado";
+            }
+
+            return View(model);
+        }
     }
 }

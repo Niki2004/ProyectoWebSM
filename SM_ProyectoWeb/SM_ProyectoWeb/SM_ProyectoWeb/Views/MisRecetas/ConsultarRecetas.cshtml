@@ -192,9 +192,14 @@
                                         <p class="recipe-description">@receta.Descripcion</p>
                                         <div class="recipe-meta">
                                             <span class="recipe-category">@receta.Nombre_Categoria</span>
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarReceta(@receta.Id_Receta)">
-                                                <i class="fas fa-trash"></i> Eliminar
-                                            </button>
+                                            <div class="recipe-actions">
+                                                <a href="@Url.Action("ModificarReceta", "MisRecetas", new { id = receta.Id_Receta })" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-edit"></i> Modificar
+                                                </a>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarReceta(@receta.Id_Receta)">
+                                                    <i class="fas fa-trash"></i> Eliminar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

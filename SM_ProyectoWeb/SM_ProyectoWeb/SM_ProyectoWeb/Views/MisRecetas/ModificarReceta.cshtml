@@ -1,0 +1,343 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model SM_ProyectoWeb.Models.RecetaModel
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modificar Receta - Recetas de la Felicidad</title>
+    <link rel="stylesheet" href="~/assets/css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/lib/themify-icons.css">
+    <link rel="stylesheet" href="~/assets/css/lib/menubar/sidebar.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <style>
+        .ingredient-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .current-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-upload-container {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .file-upload-container:hover {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+        .file-upload-container input[type="file"] {
+            display: none;
+        }
+        .file-upload-label {
+            cursor: pointer;
+            display: block;
+            padding: 10px;
+        }
+        .file-upload-icon {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .file-upload-text {
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        #preview-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+        #preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+                <ul>
+                    <li class="label">MENÚ PRINCIPAL</li>
+                    @if (Context.Session.GetString("Id_Rol") != null && Context.Session.GetString("Id_Rol") == "2")
+                    {
+                        <li class="">
+                            <a class="sidebar-sub-toggle">Registros<span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                            <ul>
+                                <li><a href="@Url.Action("","")">Usuarios</a></li>
+                            </ul>
+                        </li>
+                    }
+
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
+                        <ul>
+                            <li><a href="@Url.Action("DesayunosDestacados","Categorias")">Los más Destacadas</a></li>
+                            <li><a href="@Url.Action("DesayunosRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Entradas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("EntradasDestacados","Categorias")">Las más Destacadas</a></li>
+                            <li><a href="@Url.Action("EntradasRecientes","Categorias")">Añadidas Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Platos Fuertes <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PlatosFuertesDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PlatosFuertesRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Postres <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("PostresDestacados","Categorias")">Los más Destacados</a></li>
+                            <li><a href="@Url.Action("PostresRecientes","Categorias")">Añadidos Recientemente</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="sidebar-sub-toggle">Mis Recetas <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="@Url.Action("ConsultarRecetas","MisRecetas")">Recetas</a></li>
+                            <li><a href="@Url.Action("RegistrarReceta","MisRecetas")">Agregar Recetas</a></li>
+                            <li><a href="@Url.Action("ConsultarComentario","MisRecetas")">Comentarios</a></li>
+                            <li><a href="@Url.Action("RegistrarValoracion","MisRecetas")">Valoración</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <ul>
+                            <li class="header-icon dib">
+                                <span class="user-avatar">@ViewBag.Nombre<i class="ti-angle-down f-s-10"></i></span>
+                                <div class="drop-down dropdown-profile">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li><a href="@Url.Action("Perfil","Login")"><i class="ti-user"></i> <span>Mi Perfil</span></a></li>
+                                            <li><a href="@Url.Action("CerrarSesion","Login")"><i class="ti-power-off"></i> <span>Cerrar Sesión</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-title">
+                                <h2>Modificar Receta</h2>
+                            </div>
+                            <div class="card-body">
+                                @if (TempData["Error"] != null)
+                                {
+                                    <div class="alert alert-danger">
+                                        @TempData["Error"]
+                                    </div>
+                                }
+
+                                <form asp-action="ModificarReceta" asp-route-id="@Model.Id_Receta" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" asp-for="Id_Receta" />
+                                    <input type="hidden" asp-for="Imagen" />
+
+                                    <div class="form-group">
+                                        <label asp-for="Id_Categoria">Categoría</label>
+                                        <select asp-for="Id_Categoria" class="form-control" required>
+                                            <option value="">Seleccione una categoría</option>
+                                            <option value="1">Desayunos</option>
+                                            <option value="2">Entradas</option>
+                                            <option value="3">Platos Fuertes</option>
+                                            <option value="4">Postres</option>
+                                        </select>
+                                        <span asp-validation-for="Id_Categoria" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label asp-for="Titulo">Título</label>
+                                        <input asp-for="Titulo" class="form-control" required />
+                                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label asp-for="Descripcion">Descripción</label>
+                                        <textarea asp-for="Descripcion" class="form-control" rows="4" required></textarea>
+                                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Ingredientes</label>
+                                        <div id="ingredients-container">
+                                            @if (!string.IsNullOrEmpty(Model.Ingrediente))
+                                            {
+                                                @foreach (var ingrediente in Model.Ingrediente.Split(','))
+                                                {
+                                                    <div class="ingredient-container">
+                                                        <input type="text" name="Ingrediente" class="form-control" value="@ingrediente.Trim()" required />
+                                                        <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="ingredient-container">
+                                                    <input type="text" name="Ingrediente" class="form-control" required />
+                                                    <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                        <button type="button" class="btn btn-primary mt-2" onclick="addIngredient()">
+                                            <i class="fas fa-plus"></i> Agregar Ingrediente
+                                        </button>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Nueva Imagen (opcional)</label>
+                                        <div class="file-upload-container">
+                                            <label class="file-upload-label">
+                                                <div class="file-upload-icon">
+                                                    <i class="fas fa-cloud-upload-alt"></i>
+                                                </div>
+                                                <div class="file-upload-text">
+                                                    Haz clic para seleccionar una imagen o arrástrala aquí
+                                                </div>
+                                                <input type="file" name="file" id="nuevaImagen" accept="image/*" onchange="previewImage(this)" />
+                                            </label>
+                                        </div>
+                                        <small class="form-text text-muted">Si no selecciona una nueva imagen, se mantendrá la imagen actual.</small>
+                                        <div id="preview-container" style="display: none;">
+                                            <img id="preview" class="current-image" alt="Previsualización de la nueva imagen" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" asp-for="PlatoReciente" /> Plato Reciente
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" asp-for="PlatoDestacada" /> Plato Destacado
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Guardar Cambios
+                                        </button>
+                                        <a href="@Url.Action("ConsultarRecetas", "MisRecetas")" class="btn btn-secondary">
+                                            <i class="fas fa-times"></i> Cancelar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <script src="~/assets/js/lib/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script>
+        function addIngredient() {
+            const container = document.getElementById('ingredients-container');
+            const div = document.createElement('div');
+            div.className = 'ingredient-container';
+            div.innerHTML = `
+                <input type="text" name="Ingrediente" class="form-control" required />
+                <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeIngredient(button) {
+            const container = button.parentElement;
+            container.remove();
+        }
+
+        // Pre-seleccionar la categoría actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoriaSelect = document.getElementById('Id_Categoria');
+            const currentCategoria = '@Model.Id_Categoria';
+            if (currentCategoria) {
+                categoriaSelect.value = currentCategoria;
+            }
+        });
+
+        function previewImage(input) {
+            const previewContainer = document.getElementById('preview-container');
+            const preview = document.getElementById('preview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
