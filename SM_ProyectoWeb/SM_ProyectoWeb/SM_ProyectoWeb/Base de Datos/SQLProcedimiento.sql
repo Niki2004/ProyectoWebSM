@@ -414,3 +414,13 @@ BEGIN
         Usuario;
 END;
 GO
+
+------------------------ Eliminar Usuario ----------------------
+
+CREATE PROCEDURE EliminarUsuario
+    @Id_Usuario BIGINT
+AS
+BEGIN
+    DELETE FROM [dbo].[Usuario]
+    WHERE Id_Usuario = @Id_Usuario;
+END;

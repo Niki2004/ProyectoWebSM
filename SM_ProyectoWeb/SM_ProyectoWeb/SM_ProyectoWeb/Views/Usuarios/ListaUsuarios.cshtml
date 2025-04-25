@@ -117,49 +117,6 @@
                     <p>Explora cientos de recetas deliciosas y fáciles de preparar</p>
                 </div>
 
-               @*  <div class="row">
-                    <div class="col-lg-12 p-r-0 title-margin-right">
-                        <div class="page-header">
-                            <div class="page-title">
-                                <h2 class="text-center">Lista de Usuarios Registrados</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>ID del Usuario</th>
-                                                <th>Nombre</th>
-                                                <th>Correo Electrónico</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var usuario in Model)
-                                            {
-                                                <tr>
-                                                    <td>@usuario.Id_Usuario</td>
-                                                    <td>@usuario.Nombre</td>
-                                                    <td>@usuario.Email</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div> *@
 
                 <div class="row mb-4">
                     <div class="col-lg-12 text-center">
@@ -186,10 +143,16 @@
                                             @foreach (var usuario in Model)
                                             {
                                                 <tr>
-                                                    <td class="text-center">@usuario.Id_Usuario</td>
-                                                    <td>@usuario.Nombre</td>
-                                                    <td>@usuario.Email</td>
+                                                    <td class="text">@usuario.Id_Usuario</td>
+                                                    <td class="text">@usuario.Nombre</td>
+                                                    <td class="text">@usuario.Email</td>
+                                                    <td class="text">
+                                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarUsuario(@usuario.Id_Usuario)">
+                                                            <i class="fas fa-trash"></i> Eliminar
+                                                        </button>
+                                                    </td>
                                                 </tr>
+                                                
                                             }
                                         </tbody>
                                     </table>
@@ -203,8 +166,6 @@
 
 
 
-
-
     <div class="row">
         <div class="col-lg-12">
             <div class="footer">
@@ -213,11 +174,62 @@
         </div>
     </div>
 
+             
+
+                <!-- Modal de Confirmación de Eliminación -->
+                <div class="modal fade" id="modalConfirmacionEliminar" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacionEliminarLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalConfirmacionEliminarLabel">Confirmar Eliminación</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
     <script src="~/assets/js/lib/jquery.min.js"></script>
     <script src="~/assets/js/lib/jquery.nanoscroller.min.js"></script>
     <script src="~/assets/js/lib/menubar/sidebar.js"></script>
     <script src="~/assets/js/lib/bootstrap.min.js"></script>
     <script src="~/assets/js/scripts.js"></script>
+
+                <script>
+                    function eliminarUsuario(id) {
+                        if (!confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+                            return;
+                        }
+
+                        fetch(`/Usuarios/EliminarUsuario?id=${id}`, {
+                            method: 'DELETE'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert(data.message);
+                                    location.reload(); 
+                                } else {
+                                    alert("Error: " + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error en la eliminación:", error);
+                                alert("Ocurrió un error al intentar eliminar el usuario.");
+                            });
+                    }
+                </script>
+
+               
+
 
 </body>
 </html>

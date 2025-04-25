@@ -47,6 +47,41 @@ namespace SM_ProyectoApi.Controllers
                 return Ok(respuesta); 
             }
         }
+
+
+        [HttpDelete]
+        [Route("EliminarUsuario/{idUsuario}")]
+        public IActionResult EliminarUsuario(long idUsuario)
+        {
+            var respuesta = new RespuestaModel();
+            try
+            {
+                using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+                {
+
+                    var result = context.Execute("EliminarUsuario", new { Id_Usuario = idUsuario });
+
+                    if (result > 0)
+                    {
+                        respuesta.Indicador = true;
+                        respuesta.Mensaje = "El usuario ha sido eliminado correctamente.";
+                    }
+                    else
+                    {
+                        respuesta.Indicador = false;
+                        respuesta.Mensaje = "No se pudo eliminar el usuario. Verifique que el usuario exista.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Indicador = false;
+                respuesta.Mensaje = $"Error: {ex.Message}";
+            }
+
+            return Ok(respuesta);
         }
+
+    }
     }
 
