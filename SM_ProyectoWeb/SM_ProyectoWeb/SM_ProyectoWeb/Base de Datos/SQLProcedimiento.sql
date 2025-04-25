@@ -400,3 +400,17 @@ BEGIN
         V.Id_Valoracion DESC;
 END
 GO
+
+
+------consultar usuarios----
+CREATE PROCEDURE [dbo].[ObtenerUsuariosRegistrados]
+AS
+BEGIN
+    SELECT
+        Id_Usuario,
+        Nombre,
+        Email
+    FROM
+        Usuario;
+END;
+GO

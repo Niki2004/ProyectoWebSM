@@ -1,5 +1,5 @@
 ﻿@using SM_ProyectoWeb.Models
-@model List<RecetaModel>
+@model List<UsuarioModel>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -20,7 +20,7 @@
     <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
         <div class="nano">
             <div class="nano-content">
-                <div class="logo"><a href="index.html"><span>Recetas de la Felicidad</span></a></div>
+                <div class="logo"><span>Recetas de la Felicidad</span></a></div>
                 <ul>
                     <li class="label">MENÚ PRINCIPAL</li>
                     @if (Context.Session.GetString("Id_Rol") != null && Context.Session.GetString("Id_Rol") == "2")
@@ -31,8 +31,8 @@
                                 <li><a href="@Url.Action("ListaUsuarios","Usuarios")">Usuarios</a></li>
                             </ul>
                         </li>
-                    }
 
+                    }
                     <li class="">
                         <a class="sidebar-sub-toggle">Desayunos <span class="badge badge-primary"></span> <span class="sidebar-collapse-icon ti-angle-down"> </span></a>
                         <ul>
@@ -117,74 +117,98 @@
                     <p>Explora cientos de recetas deliciosas y fáciles de preparar</p>
                 </div>
 
-                <div class="row">
+               @*  <div class="row">
                     <div class="col-lg-12 p-r-0 title-margin-right">
                         <div class="page-header">
                             <div class="page-title">
-                                <h2 class="text-center">Platos Fuertes Añadidos Recientemente</h2>
+                                <h2 class="text-center">Lista de Usuarios Registrados</h2>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    @foreach (var receta in Model)
-                    {
-                        <div class="col-lg-4 col-md-6">
-                            <div class="recipe-card">
-
-                                <div class="recipe-image">
-                                    @if (!string.IsNullOrEmpty(receta.Imagen))
-                                    {
-                                        <img src="@receta.Imagen"
-                                             alt="@receta.Titulo"
-                                             onerror="console.error('Error al cargar la imagen:', this.src); this.src='/img/default-recipe.jpg';"
-                                             style="width: 100%; height: 100%; object-fit: cover;"
-                                             onload="console.log('Imagen cargada exitosamente:', this.src)">
-                                    }
-                                    else
-                                    {
-                                        <img src="/img/default-recipe.jpg" alt="@receta.Titulo" style="width: 100%; height: 100%; object-fit: cover;">
-                                    }
-                                    @if (receta.PlatoDestacada)
-                                    {
-                                        <div class="recipe-badge">Destacado</div>
-                                    }
-                                </div>
-
-                                <div class="recipe-content">
-                                    <h4 class="recipe-title">@receta.Titulo</h4>
-                                    <div class="ingredients-section">
-
-                                        Ingredientes:
-                                        <ul class="recipe-ingredients">
-                                            @foreach (var ingrediente in receta.Ingrediente.Split(','))
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>ID del Usuario</th>
+                                                <th>Nombre</th>
+                                                <th>Correo Electrónico</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var usuario in Model)
                                             {
-                                                <li class="ingredient-item">@ingrediente.Trim()</li>
+                                                <tr>
+                                                    <td>@usuario.Id_Usuario</td>
+                                                    <td>@usuario.Nombre</td>
+                                                    <td>@usuario.Email</td>
+                                                </tr>
                                             }
-                                        </ul>
-                                    </div>
-                                    Preparación:
-                                    <p class="recipe-description">@receta.Descripcion</p>
-                                    <div class="recipe-meta">
-                                        <span class="recipe-category">@receta.Nombre_Categoria</span>
-                                        <span>@receta.Fecha_Publicacion.ToString("dddd, dd MMMM yyyy")</span>
-                                    </div>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
 
             </div>
         </div>
-    </div>
+    </div> *@
+
+                <div class="row mb-4">
+                    <div class="col-lg-12 text-center">
+                        <h2 class="display-6 fw-semibold text">Lista de Usuarios Registrados</h2>
+                        <hr class="w-50 mx-auto mb-0 border">
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-primary text-center">
+                                            <tr>
+                                                <th scope="col">ID del Usuario</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Correo Electrónico</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var usuario in Model)
+                                            {
+                                                <tr>
+                                                    <td class="text-center">@usuario.Id_Usuario</td>
+                                                    <td>@usuario.Nombre</td>
+                                                    <td>@usuario.Email</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
 
 
     <div class="row">
         <div class="col-lg-12">
             <div class="footer">
-                <p>© Las Recetas de la Felicidad</p>
+                <p class="text-center">© Las Recetas de la Felicidad</p>
             </div>
         </div>
     </div>
