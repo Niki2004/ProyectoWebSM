@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SM_ProyectoWeb.Models;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace SM_ProyectoWeb.Controllers
@@ -102,7 +104,75 @@ namespace SM_ProyectoWeb.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult ActualizarContrasenna()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult ActualizarContrasenna(UsuarioModel model)
+        {
+            if (model.Contrasenia == null)
+            {
+                TempData["Error"] = "Debe confirmar correctamente su nueva contraseña";
+                return View();
+            }
+
+            using (var api = _httpClient.CreateClient())
+            {
+                var url = _configuration.GetSection("Variables:urlApi").Value + "Usuarios/ActualizarContrasenia";
+
+                model.Contrasenia = Encrypt(model.Contrasenia!);
+                api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                var response = api.PutAsJsonAsync(url, model).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+                    if (result != null && result.Indicador)
+                    {
+                        return RedirectToAction("Principal", "Login");
+                    }
+                    else
+                        TempData["Error"] = result!.Mensaje;
+                }
+                else
+                    TempData["Error"] = "No se pudo completar su petición";
+            }
+
+            return View();
+        }
+
+        private string Encrypt(string texto)
+        {
+            byte[] iv = new byte[16];
+            byte[] array;
+
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(_configuration.GetSection("Variables:llaveCifrado").Value!);
+                aes.IV = iv;
+
+                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
+                        {
+                            streamWriter.Write(texto);
+                        }
+
+                        array = memoryStream.ToArray();
+                    }
+                }
+            }
+
+            return Convert.ToBase64String(array);
+        }
     }
 }
 

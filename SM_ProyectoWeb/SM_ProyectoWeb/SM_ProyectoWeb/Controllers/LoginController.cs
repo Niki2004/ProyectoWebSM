@@ -130,6 +130,30 @@ namespace SM_ProyectoWeb.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult RecuperarContrasenna(UsuarioModel model)
+        {
+            using (var api = _httpClient.CreateClient())
+            {
+                var url = _configuration.GetSection("Variables:urlApi").Value + "Login/RecuperarContrasenia";
+                var response = api.PostAsJsonAsync(url, model).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadFromJsonAsync<RespuestaModel>().Result;
+
+                    if (result != null && result.Indicador)
+                        return RedirectToAction("IniciarSesion", "Login");
+                    else
+                        TempData["Error"] = result!.Mensaje;
+                }
+                else
+                    TempData["Error"] = "No se pudo completar su petición";
+            }
+
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Perfil()
         {

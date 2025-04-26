@@ -424,3 +424,35 @@ BEGIN
     DELETE FROM [dbo].[Usuario]
     WHERE Id_Usuario = @Id_Usuario;
 END;
+GO
+------------------------ Actualizar Contrasenia Usuario ----------------------
+
+CREATE PROCEDURE ActualizarContrasenia
+	@Id_Usuario bigint,
+	@Contrasenia varchar(50)
+AS
+BEGIN
+	
+	UPDATE dbo.Usuario
+	   SET Contrasenia = @Contrasenia
+	 WHERE Id_Usuario = @Id_Usuario
+
+END
+GO
+
+------------------------ Validar Usuario Por Correo ----------------------
+
+CREATE PROCEDURE [dbo].[ValidarUsuarioCorreo]
+	@Email varchar(100)
+AS
+BEGIN
+
+	SELECT	U.Id_Usuario,
+			Id_Estado,
+			U.Nombre,
+			Email
+	FROM	dbo.Usuario U
+	WHERE	Email = @Email
+	
+END
+GO

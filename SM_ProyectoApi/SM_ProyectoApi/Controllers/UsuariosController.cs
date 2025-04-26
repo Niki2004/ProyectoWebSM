@@ -35,7 +35,7 @@ namespace SM_ProyectoApi.Controllers
                 {
                     respuesta.Indicador = true;
                     respuesta.Mensaje = "Usuarios registrados obtenidos correctamente";
-                    respuesta.Datos = usuarios; 
+                    respuesta.Datos = usuarios;
                 }
                 else
                 {
@@ -44,7 +44,7 @@ namespace SM_ProyectoApi.Controllers
                     respuesta.Datos = null;
                 }
 
-                return Ok(respuesta); 
+                return Ok(respuesta);
             }
         }
 
@@ -82,6 +82,33 @@ namespace SM_ProyectoApi.Controllers
             return Ok(respuesta);
         }
 
+        [HttpPut]
+        [Route("ActualizarContrasenia")]
+        public IActionResult ActualizarContrasenia(UsuarioModel model)
+        {
+            var Id_Usuario = _utilitarios.ObtenerUsuarioFromToken(User.Claims);
+
+            using (var context = new SqlConnection(_configuration.GetSection("ConnectionStrings:BDConnection").Value))
+            {
+                var result = context.Execute("ActualizarContrasenia",
+                    new { Id_Usuario, model.Contrasenia });
+
+                var respuesta = new RespuestaModel();
+
+                if (result > 0)
+                {
+                    respuesta.Indicador = true;
+                    respuesta.Mensaje = "Información actualizada";
+                }
+                else
+                {
+                    respuesta.Indicador = false;
+                    respuesta.Mensaje = "No se actualizó la información correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
     }
-    }
+}
 
